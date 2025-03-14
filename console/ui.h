@@ -11,17 +11,39 @@
 #endif
 
 #include "../consts/consts.h"
+#include "../data/configFile.h"
 
 namespace UI
 {
     // Sets the console title
     void setConsoleTitle(std::string title = UI::consoleDefaultTitle);
 
+    // Clears the console
+    void clearConsole();
+
     // Warns the user about first run and lack of admin privileges
     void warnFirstRun();
 
+//
+// Functions realted to setup sequence //
+//
+
     // Starts setup sequence, called from main.cpp in normal circumstances
-    void setupSequence();
+    bool setupSequence();
+
+    // Immediately loads default config and generates files
+    bool startDefaultMode(ConfigFile* config);
+
+    // Guides user through the process of creating a new config
+    bool startEditMode();
+
+//
+// Functions realted to modifications // 
+//
+
+    // Resets the fast setup flag
+    bool resetFastSetup();
+
 }
 
 #endif // UI_H
