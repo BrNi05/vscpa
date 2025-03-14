@@ -20,6 +20,9 @@ namespace sysmod
 
     // Adds the program to the PATH environment variable
     void addSelfToPath();
+
+    // Creates a save lib and default config file (NO INTERNAL CODE, USINFIED PARSING FUNCS)
+    void saveLibGen();
 }
 
 

@@ -19,5 +19,10 @@
 
     void sysmod::addSelfToPath()
     {
-    
+        // add to PATH
+    }
+
+    void sysmod::saveLibGen()
+    {
+        // generate folder in appdata
     }

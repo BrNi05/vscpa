@@ -16,16 +16,20 @@
 
 int main(int argc, char* argv[])
 {
+    bool canExit = false;
+    
     UI::setConsoleTitle();
     
     /**
-        * If ran for first time with admin, add itself to PATH
+        * Checks for command line arguments (used for resetting fast setup)
+        * If ran for first time with admin, add itself to PATH and setup
         * If ran for first time but with no admin rights, restart with elevated privileges
         * Else, start setup sequence
     */
     if (sysmod::firstRunWithAdmin())
     {
         sysmod::addSelfToPath();
+        sysmod::saveLibGen();
     }
     else if (sysmod::firstRun())
     {
@@ -33,7 +37,18 @@ int main(int argc, char* argv[])
     }
     else
     {
-        UI::setupSequence();
+        if (argc == 1)
+        {
+            if (std::string(argv[1]) == Args::reset)
+            {
+                UI::resetFastSetup();
+            }
+        }
+        
+        while (!canExit)
+        {
+            canExit = UI::setupSequence();
+        }
     }
 
     return 0;
