@@ -6,6 +6,10 @@
 #include <iostream>
 #include <thread>
 
+#ifdef _WIN32
+    #include <windows.h>
+#endif
+
 void UI::setConsoleTitle(std::string title)
 {
     #ifdef _WIN32
@@ -18,9 +22,23 @@ void UI::setConsoleTitle(std::string title)
 void clearConsole()
 {
     #ifdef _WIN32
-        system("cls");
+        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+        CONSOLE_SCREEN_BUFFER_INFO csbi;
+        DWORD count;
+        DWORD cellCount;
+        COORD homeCoords = {0, 0};
+
+        if (hConsole == INVALID_HANDLE_VALUE) { } //! MESSAGE AND TERMINATE
+
+        if (!GetConsoleScreenBufferInfo(hConsole, &csbi)) { } //! MESSAGE AND TERMINATE
+        cellCount = csbi.dwSize.X * csbi.dwSize.Y;
+
+        FillConsoleOutputCharacter(hConsole, (TCHAR) ' ', cellCount, homeCoords, &count);
+        FillConsoleOutputAttribute(hConsole, csbi.wAttributes, cellCount, homeCoords, &count);
+
+        SetConsoleCursorPosition(hConsole, homeCoords);
     #else
-        system("clear");
+        std::cout << "\033[2J\033[H" << std::flush;
     #endif
 }
 
