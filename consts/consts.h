@@ -18,4 +18,10 @@ namespace Args
     extern const std::string reset;
 }
 
+namespace IO
+{
+    extern const std::string ownDirName;
+    extern const std::string fastSetupFileName;
+}
+
 #endif // CONSTS_H
