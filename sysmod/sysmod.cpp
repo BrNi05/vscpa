@@ -1,28 +1,68 @@
 #include "sysmod.h"
 
-    bool sysmod::firstRun()
-    {
-        // check for config file (user appdata folder) and admin as well
-        
-        return false;
-    }
+#include "../io/io.h"
 
-    void sysmod::restartWithAdmin()
-    {
-        
-    }
+#include <iostream>
 
-    bool sysmod::firstRunWithAdmin()
-    {
-        return false;
-    }
+#ifdef _WIN32
+    #include <windows.h>
+    #include <shellapi.h>
+#else
+    #include <unistd.h>
+#endif
 
-    void sysmod::addSelfToPath()
-    {
-        // add to PATH
-    }
 
-    void sysmod::saveLibGen()
+bool sysmod::firstRun()
+{
+    // No admin rights, just check for own directory
+    return IO::ownDirExists();
+}
+
+void sysmod::restartWithAdmin()
+{
+    #ifdef _WIN32
+
+
+    #else
+
+
+    #endif
+}
+
+bool sysmod::firstRunWithAdmin()
+{
+    if (!firstRun()) { return false; }
+    else
     {
-        // generate folder in appdata
+        #ifdef _WIN32
+            bool isAdmin = false;
+            HANDLE hToken = NULL;
+            if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken))
+            {
+                TOKEN_ELEVATION Elevation;
+                DWORD cbSize = sizeof(TOKEN_ELEVATION);
+                if (GetTokenInformation(hToken, TokenElevation, &Elevation, sizeof(Elevation), &cbSize))
+                {
+                    isAdmin = Elevation.TokenIsElevated;
+                }
+            }
+            if (hToken) { CloseHandle(hToken); }
+
+            if (isAdmin) { return true; }
+            else { return false; }
+        #else
+            return geteuid() == 0;
+        #endif
     }
+}
+
+void sysmod::addSelfToPath()
+{
+    // add to PATH
+    // create marking dir
+}
+
+void sysmod::saveLibGen()
+{
+    // generate folder in appdata
+}

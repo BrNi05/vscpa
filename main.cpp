@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 {
     bool canExit = false;
     
-    UI::setConsoleTitle();
+    UI::setConsoleTitle(UI::consoleDefaultTitle);
     
     /**
         * Checks for command line arguments (used for resetting fast setup)
