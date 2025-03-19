@@ -15,6 +15,8 @@
 
 namespace UI
 {
+// Functions for console management an error messages //  
+
     // Sets the console title
     void setConsoleTitle(std::string title = UI::consoleDefaultTitle);
 
@@ -24,9 +26,10 @@ namespace UI
     // Warns the user about first run and lack of admin privileges
     void warnFirstRun();
 
-//
+    // Generic error message function
+    void errorMsg(std::string where);
+
 // Functions realted to setup sequence //
-//
 
     // Starts setup sequence, called from main.cpp in normal circumstances
     bool setupSequence();
@@ -37,12 +40,10 @@ namespace UI
     // Guides user through the process of creating a new config
     bool startEditMode();
 
-//
 // Functions realted to modifications // 
-//
 
     // Resets the fast setup flag
-    bool resetFastSetup();
+    void resetFastSetup();
 
 }
 

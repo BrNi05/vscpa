@@ -1,6 +1,7 @@
 #include "sysmod.h"
 
 #include "../io/io.h"
+#include "../console/ui.h"
 
 #include <iostream>
 
@@ -21,11 +22,27 @@ bool sysmod::firstRun()
 void sysmod::restartWithAdmin()
 {
     #ifdef _WIN32
+        wchar_t appPath[MAX_PATH];
+        GetModuleFileNameW(NULL, appPath, MAX_PATH);
 
+        SHELLEXECUTEINFOW sei = { sizeof(sei) };
+        sei.lpVerb = L"runas"; // run as admin
+        sei.lpFile = appPath;
+        sei.hwnd = NULL;
+        sei.nShow = SW_NORMAL;
+
+        if (ShellExecuteExW(&sei)) { exit(0); }
+        else { UI::errorMsg("restWAdmin - shellexecute"); }
 
     #else
-
-
+        char appPath[1024];
+        ssize_t pathLength = readlink("/proc/self/exe", appPath, sizeof(appPath) - 1);
+        if (pathLength == -1) { UI::errorMsg("restWAdmin - readlink"); }
+        appPath[pathLength] = '\0';
+        
+        std::string command = "sudo " + std::string(appPath);
+        system(command.c_str());
+        exit(0);
     #endif
 }
 

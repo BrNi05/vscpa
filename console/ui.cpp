@@ -5,10 +5,13 @@
 
 #include <iostream>
 #include <thread>
+#include <stdlib.h>
 
 #ifdef _WIN32
     #include <windows.h>
 #endif
+
+// Functions for console management an error messages //  
 
 void UI::setConsoleTitle(std::string title)
 {
@@ -19,7 +22,7 @@ void UI::setConsoleTitle(std::string title)
     #endif
 }
 
-void clearConsole()
+void UI::clearConsole()
 {
     #ifdef _WIN32
         HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -28,9 +31,9 @@ void clearConsole()
         DWORD cellCount;
         COORD homeCoords = {0, 0};
 
-        if (hConsole == INVALID_HANDLE_VALUE) { } //! MESSAGE AND TERMINATE
+        if (hConsole == INVALID_HANDLE_VALUE) { UI::errorMsg("console clearing - handle"); }
 
-        if (!GetConsoleScreenBufferInfo(hConsole, &csbi)) { } //! MESSAGE AND TERMINATE
+        if (!GetConsoleScreenBufferInfo(hConsole, &csbi)) { UI::errorMsg("console clearing - buffer info"); }
         cellCount = csbi.dwSize.X * csbi.dwSize.Y;
 
         FillConsoleOutputCharacter(hConsole, (TCHAR) ' ', cellCount, homeCoords, &count);
@@ -49,6 +52,16 @@ void UI::warnFirstRun()
     std::this_thread::sleep_for(std::chrono::seconds(3));
     sysmod::restartWithAdmin();
 }
+
+void UI::errorMsg(std::string where)
+{
+    std::cout << "An error occured in component: " << where << std::endl;
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    exit(1);
+}
+
+
+// Functions realted to setup sequence //
 
 bool UI::setupSequence()
 {
@@ -132,12 +145,12 @@ bool UI::startEditMode()
     }
 }
 
-bool UI::resetFastSetup()
-{
-    bool success = true;
 
-    // delete the fast setup flag from the default config file if existing
+// Functions realted to modifications // 
+
+void UI::resetFastSetup()
+{
+    IO::deleteFastSetup();
     // modify the config file
 
-    return success;
 }
