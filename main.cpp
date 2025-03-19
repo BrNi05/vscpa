@@ -1,11 +1,3 @@
-#include <iostream>
-
-#ifdef _WIN32
-    #include <windows.h>
-#else
-    #include <unistd.h>
-#endif
-
 #include "./json/json.hpp"
 #include "./sysmod/sysmod.h"
 #include "./consts/consts.h"
@@ -20,6 +12,8 @@ int main(int argc, char* argv[])
     
     UI::setConsoleTitle(UI::consoleDefaultTitle);
     
+    IO::fastSetup = IO::fastSetupExists(); // init
+
     /**
         * Checks for command line arguments (used for resetting fast setup)
         * If ran for first time with admin, add itself to PATH and setup

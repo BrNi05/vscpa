@@ -1,6 +1,7 @@
 #include "io.h"
 
 #include "../consts/consts.h"
+#include "../console/ui.h"
 
 #include <iostream>
 #include <filesystem>
@@ -60,20 +61,14 @@ std::filesystem::path IO::getAppdataPath()
             CoTaskMemFree(path);
             return appDataPath;
         }
-        else
-        {
-            //! ERROR HANDLING - message and terminate
-        }
+        else { UI::errorMsg("getAppdataPath - SHGetKnownFolderPath"); }
     #else
         const char* path = std::getenv("HOME");
         if (path != nullptr)
         {
             return std::filesystem::path(path) / ".local/share";
         }
-        else
-        {
-            //! ERROR HANDLING - message and terminate
-        }
+        else { UI::errorMsg("getAppdataPath - getenv-HOME"); }
 
     #endif
 }
@@ -83,7 +78,12 @@ bool IO::ownDirExists()
     return std::filesystem::exists(getAppdataPath() / IO::ownDirName) && std::filesystem::is_directory(getAppdataPath() / IO::ownDirName);
 }
 
-bool IO::deleteFastSetup()
+bool IO::fastSetupExists()
 {
-    
+    return std::filesystem::exists(getAppdataPath() / IO::ownDirName / IO::fastSetupFileName);
+}
+
+void IO::deleteFastSetup()
+{
+    if (fastSetupExists()) { std::filesystem::remove(getAppdataPath() / IO::ownDirName / IO::fastSetupFileName); }
 }

@@ -8,4 +8,4 @@ const std::string UI::greeting2 = "Setup requires admin priviliges, restarting..
 const std::string Args::reset = "reset";
 
 const std::string IO::ownDirName = "VSCodeProjectAssistant";
-const std::string IO::fastSetupFileName = "fastSetup";
+const std::string IO::fastSetupFileName = "fastSetup.txt";

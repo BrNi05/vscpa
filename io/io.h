@@ -34,8 +34,11 @@ namespace IO
     // Checks if a program generated directory exists in appdata/local
     bool ownDirExists();
 
+    // Checks if the fast setup marking file exists
+    bool fastSetupExists();
+
     // Deletes the fast setup marking file
-    bool deleteFastSetup();
+    void deleteFastSetup();
 }
 
 #endif // IO_H
