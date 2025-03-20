@@ -61,7 +61,7 @@ std::filesystem::path IO::getAppdataPath()
             CoTaskMemFree(path);
             return appDataPath;
         }
-        else { UI::errorMsg("getAppdataPath - SHGetKnownFolderPath"); }
+        else { UI::errorMsg("getAppdataPath - SHGetKnownFolderPath"); return ""; }
     #else
         const char* path = std::getenv("HOME");
         if (path != nullptr)
@@ -75,15 +75,15 @@ std::filesystem::path IO::getAppdataPath()
 
 bool IO::ownDirExists()
 {
-    return std::filesystem::exists(getAppdataPath() / IO::ownDirName) && std::filesystem::is_directory(getAppdataPath() / IO::ownDirName);
+    return std::filesystem::exists(getAppdataPath() / IO::OWN_DIR_NAME) && std::filesystem::is_directory(getAppdataPath() / IO::OWN_DIR_NAME);
 }
 
 bool IO::fastSetupExists()
 {
-    return std::filesystem::exists(getAppdataPath() / IO::ownDirName / IO::fastSetupFileName);
+    return std::filesystem::exists(getAppdataPath() / IO::OWN_DIR_NAME / IO::FAST_SETUP_FILE_NAME);
 }
 
 void IO::deleteFastSetup()
 {
-    if (fastSetupExists()) { std::filesystem::remove(getAppdataPath() / IO::ownDirName / IO::fastSetupFileName); }
+    if (fastSetupExists()) { std::filesystem::remove(getAppdataPath() / IO::OWN_DIR_NAME / IO::FAST_SETUP_FILE_NAME); }
 }

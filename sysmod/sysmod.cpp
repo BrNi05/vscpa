@@ -4,9 +4,11 @@
 #include "../console/ui.h"
 
 #include <iostream>
+#include <fstream>
 
 #ifdef _WIN32
     #include <windows.h>
+    #include <shlobj.h>
     #include <shellapi.h>
 #else
     #include <unistd.h>
@@ -21,12 +23,17 @@ bool sysmod::firstRun()
 
 void sysmod::restartWithAdmin()
 {
+    restartApp(true);
+}
+
+void sysmod::restartApp(bool withAdmin)
+{
     #ifdef _WIN32
         wchar_t appPath[MAX_PATH];
         GetModuleFileNameW(NULL, appPath, MAX_PATH);
 
         SHELLEXECUTEINFOW sei = { sizeof(sei) };
-        sei.lpVerb = L"runas"; // run as admin
+        if (withAdmin) { sei.lpVerb = L"runas"; }
         sei.lpFile = appPath;
         sei.hwnd = NULL;
         sei.nShow = SW_NORMAL;
@@ -40,7 +47,7 @@ void sysmod::restartWithAdmin()
         if (pathLength == -1) { UI::errorMsg("restWAdmin - readlink"); }
         appPath[pathLength] = '\0';
         
-        std::string command = "sudo " + std::string(appPath);
+        std::string command = withAdmin ? "sudo " + std::string(appPath) : std::string(appPath);
         system(command.c_str());
         exit(0);
     #endif
@@ -75,11 +82,77 @@ bool sysmod::firstRunWithAdmin()
 
 void sysmod::addSelfToPath()
 {
-    // add to PATH
-    // create marking dir
+    #ifdef _WIN32
+        char exePath[MAX_PATH];
+        GetModuleFileNameA(NULL, exePath, MAX_PATH);
+
+        std::string ownDir = std::string(exePath);
+        ownDir = ownDir.substr(0, ownDir.find_last_of("\\"));
+    
+        HKEY hKey;
+        if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment", 0, KEY_SET_VALUE, &hKey) == ERROR_SUCCESS)
+        {
+            char currentMPath[Sysmod::MAX_PATH_LENGTH];
+            DWORD size = sizeof(currentMPath);
+
+            if (RegQueryValueExA(hKey, "Path", NULL, NULL, (LPBYTE)currentMPath, &size) == ERROR_SUCCESS)
+            {
+                // Check if PATH already contains the program
+                if (strstr(currentMPath, ownDir.c_str()) != NULL) { return; }
+                
+                std::string newPath = std::string(currentMPath) + ";" + ownDir;
+                if (RegSetValueExA(hKey, "Path", 0, REG_SZ, (LPBYTE)newPath.c_str(), newPath.size() + 1) == ERROR_SUCCESS)
+                {
+                    SendMessageTimeoutA(HWND_BROADCAST, WM_SETTINGCHANGE, 0, (LPARAM)"Environment", SMTO_ABORTIFHUNG, 5000, NULL);
+                    RegCloseKey(hKey);
+                }
+                else { UI::errorMsg("addSelfToPath - RegSetValueExA"); }
+            }
+            else { UI::errorMsg("addSelfToPath - RegQueryValueExA"); }
+        }
+        else { UI::errorMsg("addSelfToPath - RegOpenKeyExA"); }
+
+    #else
+        char exePath[1024];
+        ssize_t pathLength = readlink("/proc/self/exe", exePath, sizeof(exePath) - 1);
+        if (pathLength == -1) { UI::errorMsg("addSelfToPath - readlink"); }
+        exePath[pathLength] = '\0';
+
+        std::string ownDir = std::string(exePath);
+        ownDir = ownDir.substr(0, ownDir.find_last_of("/"));
+
+        std::string homeDir = std::string(getenv("HOME"));
+        if (homeDir.empty()) { UI::errorMsg("addSelfToPath - getenv-HOME"); }
+
+        std::string shellConfig;
+        const char* shell = getenv("SHELL");
+        if (shell && strstr(shell, "zsh")) { shellConfig = homeDir + "/.zshrc"; }
+        else { shellConfig = homeDir + "/.bashrc"; }
+
+        // Check if PATH already contains the program
+        std::ifstream inputFile(shellConfig);
+        std::string line;
+        while (std::getline(inputFile, line)) { if (line.find(ownDir) != std::string::npos) { inputFile.close(); return; } }
+        
+        std::ofstream outputFile(shellConfig, std::ios::app);
+        if (outputFile.is_open())
+        {
+            std::ofstream outputFile(shellConfig, std::ios::app);
+            outputFile << "\nexport PATH=\"" << ownPath << ":$PATH\"\n";
+            outputFile.close();
+        }
+        else { UI::errorMsg("addSelfToPath - ofstream"); }
+    #endif
+
+    saveLibGen();
 }
 
 void sysmod::saveLibGen()
 {
-    // generate folder in appdata
+    std::filesystem::create_directory(IO::getAppdataPath() / IO::OWN_DIR_NAME);
+
+    #ifdef _WIN32
+        std::string saveLibPath = (IO::getAppdataPath() / IO::OWN_DIR_NAME / IO::FAST_SETUP_FILE_NAME).string();
+        SetFileAttributesA(saveLibPath.c_str(), FILE_ATTRIBUTE_HIDDEN);
+    #endif
 }
