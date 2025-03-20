@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
 {
     bool canExit = false;
     
-    UI::setConsoleTitle(UI::consoleDefaultTitle);
+    UI::setConsoleTitle(UI::CONSOLE_DEFAULT_TITLE);
     
     IO::fastSetup = IO::fastSetupExists(); // init
 
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     {
         if (argc == 1)
         {
-            if (std::string(argv[1]) == Args::reset)
+            if (std::string(argv[1]) == Args::RESET)
             {
                 UI::resetFastSetup();
             }

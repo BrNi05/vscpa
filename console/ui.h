@@ -18,7 +18,7 @@ namespace UI
 // Functions for console management an error messages //  
 
     // Sets the console title
-    void setConsoleTitle(std::string title = UI::consoleDefaultTitle);
+    void setConsoleTitle(std::string_view title = UI::CONSOLE_DEFAULT_TITLE);
 
     // Clears the console
     void clearConsole();

@@ -13,12 +13,12 @@
 
 // Functions for console management an error messages //  
 
-void UI::setConsoleTitle(std::string title)
+void UI::setConsoleTitle(std::string_view title)
 {
     #ifdef _WIN32
-        SetConsoleTitleA(title.c_str());
+        SetConsoleTitleA(title.data());
     #else
-        std::cout << "\033]0;" << title << "\007";
+        std::cout << "\033]0;" << title.data() << "\007";
     #endif
 }
 
@@ -47,7 +47,7 @@ void UI::clearConsole()
 
 void UI::warnFirstRun()
 {
-    std::cout << UI::greeting1 << std::endl << UI::greeting2 << std::endl;
+    std::cout << UI::GREETING_1 << std::endl << UI::GREETING_2 << std::endl;
         
     std::this_thread::sleep_for(std::chrono::seconds(3));
     sysmod::restartWithAdmin();
@@ -55,9 +55,10 @@ void UI::warnFirstRun()
 
 void UI::errorMsg(std::string where)
 {
-    std::cout << "An error occured in component: " << where << std::endl;
+    std::cout << UI::ERROR_MSG_1 << where << std::endl;
+    std::cout << UI::ERROR_MSG_2 << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(2));
-    exit(1);
+    sysmod::restartApp();
 }
 
 
@@ -73,19 +74,17 @@ bool UI::setupSequence()
         return startDefaultMode(config);
     }
 
-    std::cout << "Choose a run mode:" << std::endl;
-    std::cout << "D - Default mode" << std::endl;
-    std::cout << "E - Edit mode" << std::endl;
+    std::cout << Setup::PROMT << "\n" << Setup::DEFAULT_MODE << "\n" << Setup::EDIT_MODE << std::endl;
 
     char input;
     std::cin >> input;
     switch (input)
     {
-        case 'D':
+        case Setup::dDEFAULT_MODE_CHAR:
             return startDefaultMode(config);
         break;
 
-        case 'E':
+        case Setup::EDIT_MODE_CHAR:
             return startEditMode();
         break;
 
