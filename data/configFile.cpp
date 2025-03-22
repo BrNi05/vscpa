@@ -1,9 +1,41 @@
 #include "configFile.h"
+#include "../io/io.h"
 
-ConfigFile::ConfigFile(bool loadDefault)
+ConfigFile::ConfigFile(bool loadDefault, std::string compilerPath)
 {
-    // look for default config file and load it wiht IO
+    if(loadDefault)
+    {
+        this->mode = IO::detectCMode();
+        if (this->mode == NONE) { this->mode = CPP; }
+        this->cStd = C23;
+        this->cppStd = CPP23;
+
+        this->headerInSubDirs = true;
+        this->srcInSubDirs = true;
+
+        this->defines = "-Wall, -Werror";
+        this->otherCompilerArgs = "";
+
+        this->compilerPath = compilerPath;
+        this->outputProgramName = "runnable";
+    }
+    else
+    {
+        ConfigFile *config = IO::loadConfigFile();
+        
+        this->mode = config->getMode();
+        this->cStd = config->getCStd();
+        this->cppStd = config->getCPPStd();
+        this->headerInSubDirs = config->getHeaderInSubDirs();
+        this->srcInSubDirs = config->getSrcInSubDirs();
+        this->defines = config->getDefines();
+        this->otherCompilerArgs = config->getOtherCompilerArgs();
+        this->compilerPath = config->getCompilerPath();
+        this->outputProgramName = config->getOutputProgramName();
+    }
 }
+
+ConfigFile::ConfigFile() {};
 
 
 // Getters and setters
@@ -59,16 +91,6 @@ void ConfigFile::setOutputProgramName(std::string outputProgramName)
     this->outputProgramName = outputProgramName;
 }
 
-void ConfigFile::setTaskName(std::string taskName)
-{
-    this->taskName = taskName;
-}
-
-void ConfigFile::setFastSetup(bool fastSetup)
-{
-    this->fastSetup = fastSetup;
-}
-
 CMode ConfigFile::getMode()
 {
     return this->mode;
@@ -120,14 +142,4 @@ std::string ConfigFile::getCompilerPath()
 std::string ConfigFile::getOutputProgramName()
 {
     return this->outputProgramName;
-}
-
-std::string ConfigFile::getTaskName()
-{
-    return this->taskName;
-}
-
-bool ConfigFile::getFastSetup()
-{
-    return this->fastSetup;
 }

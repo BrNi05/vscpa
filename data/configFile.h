@@ -1,42 +1,16 @@
 #ifndef CONFIGFILE_H
 #define CONFIGFILE_H
 
+#include "common.hpp"
 #include <string>
-
-enum CMode
-{
-    C,
-    CPP
-};
-
-enum CStd
-{
-    NOT_C,
-    C89,
-    C90,
-    C95,
-    C99,
-    C11,
-    C17,
-    C23
-};
-
-enum CPPStd
-{
-    NOT_CPP,
-    CPP98,
-    CPP03,
-    CPP11,
-    CPP14,
-    CPP17,
-    CPP20,
-    CPP23
-};
 
 class ConfigFile
 {
     public:
-        ConfigFile(bool loadDefault = true);
+        
+        // Load system default if no save is found
+        ConfigFile(bool loadDefault, std::string compilerPath);
+        ConfigFile();
 
         void setMode(CMode mode);
         void setStd(CStd cStd);
@@ -47,8 +21,6 @@ class ConfigFile
         void setOtherCompilerArgs(std::string otherCompilerArgs);
         void setCompilerPath(std::string compilerPath);
         void setOutputProgramName(std::string outputProgramName);
-        void setTaskName(std::string taskName);
-        void setFastSetup(bool fastSetup);
 
         CMode getMode();
         CStd getCStd();
@@ -59,8 +31,6 @@ class ConfigFile
         std::string getOtherCompilerArgs();
         std::string getCompilerPath();
         std::string getOutputProgramName();
-        std::string getTaskName();
-        bool getFastSetup();
 
     private:
         CMode mode;
@@ -76,8 +46,6 @@ class ConfigFile
         std::string compilerPath;
 
         std::string outputProgramName;
-        std::string taskName;
-        bool fastSetup;
 };
 
 #endif // CONFIGFILE_H
