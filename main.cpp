@@ -3,8 +3,10 @@
 #include "./consts/consts.h"
 #include "./console/ui.h"
 #include "./io/io.h"
-
 #include "./devtools/memtrace.h"
+
+#include <thread>
+
 
 int main(int argc, char* argv[])
 {
@@ -24,6 +26,8 @@ int main(int argc, char* argv[])
     {
         sysmod::addSelfToPath();
         sysmod::saveLibGen();
+        UI::infoMsg(UI::ADMIN_SUCCESS.data());
+        exit(0);
     }
     else if (sysmod::firstRun())
     {
@@ -35,12 +39,22 @@ int main(int argc, char* argv[])
         {
             if (std::string(argv[1]) == Args::RESET)
             {
-                UI::resetFastSetup();
+                IO::resetFastSetup();
+                UI::infoMsg(UI::RESET_SUCCESS.data());
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                exit(0);
             }
         }
         
-        while (!canExit)
+        if (IO::startedFromFolder())
         {
+            UI::infoMsg(UI::OPENED_FROM_EXPLORER.data());
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            exit(0);
+        }
+
+        while (!canExit)
+        {   
             canExit = UI::setupSequence();
         }
     }

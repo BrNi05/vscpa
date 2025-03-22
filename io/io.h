@@ -3,6 +3,7 @@
 
 #include <filesystem>
 #include "../data/configFile.h"
+#include "../data/common.hpp"
 
 namespace IO
 {
@@ -10,21 +11,28 @@ namespace IO
     
 // Config file related operations //
 
-    // Checks if the default config file (and directories) exists
-    bool defaultConfigExists();
-
     // Loads the config file if there is one
     ConfigFile* loadConfigFile();
 
+    // Checks for .c or .cpp files in the folder and sets the auto default config file accordingly (fallback)
+    CMode detectCMode();
+
+    // Finds gcc/g++ path
+    std::string findCompilerPath();
 
 // JSON operations //
     
     // Saves the config file
-    int saveConfigFile();
+    void saveConfigFile(ConfigFile *config);
 
     // Generates the VS Code Tasks and Launch files
-    int generateVSCodeFiles();
+    void generateVSCodeFiles(ConfigFile *config);
 
+    // Checks if the fast setup marking file exists
+    bool fastSetupExists();
+
+    // Deletes the fast setup marking file
+    void resetFastSetup();
 
 // File operations realted to the programs working //
 
@@ -34,11 +42,11 @@ namespace IO
     // Checks if a program generated directory exists in appdata/local
     bool ownDirExists();
 
-    // Checks if the fast setup marking file exists
-    bool fastSetupExists();
+    // Returns the path to the stored default config file or an empty path if it does not exist
+    std::filesystem::path defaultConfigPath();
 
-    // Deletes the fast setup marking file
-    void deleteFastSetup();
+    // Check if program is started from folder or canonical path
+    bool startedFromFolder();
 }
 
 #endif // IO_H

@@ -1,5 +1,4 @@
 #include "io.h"
-
 #include "../consts/consts.h"
 #include "../console/ui.h"
 
@@ -10,6 +9,7 @@
     #include <windows.h>
     #include <shlobj.h>
     //#include <shlobj_core.h>
+    #include <vector>
 #else
     #include <unistd.h>
     #include <cstdlib.h>
@@ -21,35 +21,111 @@ bool IO::fastSetup = false;
 
 // Config file related operations //
 
-bool IO::defaultConfigExists()
-{
-    
-}
-
 ConfigFile* IO::loadConfigFile()
 {
-    // loads the config file if there is one created
-    // returns an empty object if not
+    if (IO::defaultConfigPath() != "")
+    {
+        ConfigFile *config = new ConfigFile();
 
-    fastSetup = true; // set
+        //! load file and fill the object
+
+        return config;
+    }
+    else
+    {
+        return new ConfigFile(true, findCompilerPath());
+    }
+}
+
+CMode IO::detectCMode()
+{
+    bool cppFound = false;
+    bool cFound = false;
+
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(std::filesystem::current_path()))
+    {
+        if (entry.path().extension() == ".cpp") { cppFound = true; }
+        else if (entry.path().extension() == ".c") { cFound = true; }
+    }
+
+    if (cppFound || !cFound) { return CPP; }
+    else { return C; }
+}
+
+std::string IO::findCompilerPath()
+{
+    #ifdef _WIN32
+        std::vector<std::string> possiblePaths;
+
+        possiblePaths =
+        { "C:\\msys64\\ucrt64\\bin\\gdb.exe",
+          "C:\\MinGW\\bin\\gdb.exe",
+          "C:\\Program Files\\mingw-w64\\bin\\gdb.exe",
+          "C:\\msys2\\mingw64\\bin\\gdb.exe",
+          "C:\\cygwin64\\bin\\gdb.exe",
+          "C:\\Program Files\\Git\\usr\\bin\\gdb.exe"
+        };
+
+        for (const auto& path : possiblePaths)
+        {
+            if (std::filesystem::exists(path)) { return path; }
+        }
+
+        // Fallback, assuming gdb is in PATH
+        char buffer[PATH_MAX];
+        FILE* pipe = _popen("where gdb", "r");
+        if (!pipe) { pipe = popen("command -v gdb", "r"); }
+        if (pipe && fgets(buffer, sizeof(buffer), pipe) != NULL) { pclose(pipe); return std::string(buffer); }
+        else { UI::errorMsg("findCompilerPath - fallbackFail"); return ""; }
+    #else
+        char buffer[PATH_MAX];
+        FILE* pipe = popen("which gdb", "r");
+        if (!pipe) { pipe = popen("command -v gdb", "r"); }
+        if (pipe && fgets(buffer, sizeof(buffer), pipe) != NULL) { pclose(pipe); return std::string(buffer); }
+        else { UI::errorMsg("findCompilerPath - fallbackFail"); return ""; }
+    #endif
 }
 
 
 // JSON operations //
 
-int IO::saveConfigFile()
+void IO::saveConfigFile(ConfigFile *config)
 {
+    
+}
+
+void IO::generateVSCodeFiles(ConfigFile *config)
+{
+    // Safe delete existing .vscode folder and content
+    try
+    {
+        for (const auto& entry : std::filesystem::directory_iterator(".vscode"))
+        {
+            // check if filename is tasks.json or launch.json
+            if (entry.path().filename() == "tasks.json" || entry.path().filename() == "launch.json")
+            {
+                std::filesystem::remove(entry.path());
+            }
+        }
+    }
+    catch (const std::exception& e) { UI::errorMsg("generateVSCodeFiles - remove_all"); }
+
+    //! Create tasks.json and launch.json files
 
 }
 
-int IO::generateVSCodeFiles()
+bool IO::fastSetupExists()
 {
-    // and .vscode folder as well if not present
-    // delete existing content (rmdir forced)
+    return std::filesystem::exists(getAppdataPath() / IO::OWN_DIR_NAME / IO::FAST_SETUP_FILE_NAME);
+}
+
+void IO::resetFastSetup()
+{
+    if (fastSetupExists()) { std::filesystem::remove(getAppdataPath() / IO::OWN_DIR_NAME / IO::FAST_SETUP_FILE_NAME); }
 }
 
 
-// File operations realted to the programs working //
+// File and dir path operations //
 
 std::filesystem::path IO::getAppdataPath()
 {
@@ -78,12 +154,30 @@ bool IO::ownDirExists()
     return std::filesystem::exists(getAppdataPath() / IO::OWN_DIR_NAME) && std::filesystem::is_directory(getAppdataPath() / IO::OWN_DIR_NAME);
 }
 
-bool IO::fastSetupExists()
+std::filesystem::path IO::defaultConfigPath()
 {
-    return std::filesystem::exists(getAppdataPath() / IO::OWN_DIR_NAME / IO::FAST_SETUP_FILE_NAME);
+    std::filesystem::path defaultConfigPath = getAppdataPath() / IO::OWN_DIR_NAME / IO::DEFAULT_CONFIG_FILE_NAME;
+
+    if (std::filesystem::exists(defaultConfigPath) && std::filesystem::file_size(defaultConfigPath) != 0) { return defaultConfigPath; }
+    else { return ""; }
 }
 
-void IO::deleteFastSetup()
+bool IO::startedFromFolder()
 {
-    if (fastSetupExists()) { std::filesystem::remove(getAppdataPath() / IO::OWN_DIR_NAME / IO::FAST_SETUP_FILE_NAME); }
+    char exePath[1024] = {0};
+
+    #ifdef _WIN32
+        GetModuleFileName(NULL, exePath, sizeof(exePath));
+    #elif __linux__
+        size_t len = readlink("/proc/self/exe", exePath, sizeof(exePath) - 1);
+        if (len != -1) { exePath[len] = '\0'; }
+    #elif __APPLE__
+        uint32_t size = sizeof(exePath);
+        if (_NSGetExecutablePath(exePath, &size) == 0) { exePath[size] = '\0'; }
+    #endif
+
+    std::filesystem::path exeDir = std::filesystem::canonical(exePath).parent_path();
+    std::filesystem::path currentDir = std::filesystem::current_path();
+
+    return !(exeDir == currentDir);
 }
