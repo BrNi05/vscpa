@@ -10,6 +10,9 @@
     #include <windows.h>
     #include <shlobj.h>
     #include <shellapi.h>
+#elif __APPLE__
+    #include <mach-o/dyld.h>
+    #include <unistd.h>
 #else
     #include <unistd.h>
 #endif
@@ -99,6 +102,8 @@ void sysmod::addSelfToPath()
             {
                 // Check if PATH already contains the program
                 if (strstr(currentMPath, ownDir.c_str()) != NULL) { return; }
+
+                //! UPDATE 1.1.: Add gcc to path if not already
                 
                 std::string newPath = std::string(currentMPath) + ";" + ownDir;
                 if (RegSetValueExA(hKey, "Path", 0, REG_SZ, (LPBYTE)newPath.c_str(), newPath.size() + 1) == ERROR_SUCCESS)
@@ -113,10 +118,16 @@ void sysmod::addSelfToPath()
         else { UI::errorMsg("addSelfToPath - RegOpenKeyExA"); }
 
     #else
-        char exePath[1024];
-        ssize_t pathLength = readlink("/proc/self/exe", exePath, sizeof(exePath) - 1);
-        if (pathLength == -1) { UI::errorMsg("addSelfToPath - readlink"); }
-        exePath[pathLength] = '\0';
+        char exePath[1024] = {0};
+
+        #ifdef __APPLE__
+            uint32_t size = sizeof(exePath);
+            if (_NSGetExecutablePath(exePath, &size) != 0) { UI::errorMsg("addSelfToPath - _NSGetExecutablePath"); }
+        #elif __linux__
+            ssize_t pathLength = readlink("/proc/self/exe", exePath, sizeof(exePath) - 1);
+            if (pathLength == -1) { throw std::runtime_error("addSelfToPath - readlink failed"); }
+            exePath[pathLength] = '\0';
+        #endif
 
         std::string ownDir = std::string(exePath);
         ownDir = ownDir.substr(0, ownDir.find_last_of("/"));
@@ -134,6 +145,8 @@ void sysmod::addSelfToPath()
         std::string line;
         while (std::getline(inputFile, line)) { if (line.find(ownDir) != std::string::npos) { inputFile.close(); return; } }
         
+        //! UPDATE 1.1.: Add gcc to path if not already
+
         std::ofstream outputFile(shellConfig, std::ios::app);
         if (outputFile.is_open())
         {
@@ -145,6 +158,12 @@ void sysmod::addSelfToPath()
     #endif
 
     saveLibGen();
+}
+
+//! UPDATE 1.1.: Add gcc to path if not already
+void sysmod::addCompilerToPath(std::string compilerPath)
+{
+
 }
 
 void sysmod::saveLibGen()

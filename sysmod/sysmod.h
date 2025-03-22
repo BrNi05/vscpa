@@ -24,6 +24,9 @@ namespace sysmod
     // Adds the program to the PATH environment variable
     void addSelfToPath();
 
+    // If compiler is found without using PATH, adds it to the PATH environment variable
+    void addCompilerToPath(std::string compilerPath);
+
     // Creates a save lib and default config file (NO INTERNAL CODE, USINFIED PARSING FUNCS)
     void saveLibGen();
 }
