@@ -29,6 +29,9 @@ namespace UI
     // Generic error message function
     void errorMsg(std::string where);
 
+    // Generic information message function
+    void infoMsg(std::string msg);
+
 // Functions realted to setup sequence //
 
     // Starts setup sequence, called from main.cpp in normal circumstances
@@ -39,12 +42,6 @@ namespace UI
 
     // Guides user through the process of creating a new config
     bool startEditMode();
-
-// Functions realted to modifications // 
-
-    // Resets the fast setup flag
-    void resetFastSetup();
-
 }
 
 #endif // UI_H

@@ -61,18 +61,19 @@ void UI::errorMsg(std::string where)
     sysmod::restartApp();
 }
 
+void UI::infoMsg(std::string msg)
+{
+    std::cout << msg << std::endl;
+}
+
 
 // Functions realted to setup sequence //
 
 bool UI::setupSequence()
 {
-    // User inputs run mode
-
     ConfigFile* config = IO::loadConfigFile();
-    if (config->getFastSetup())
-    {
-        return startDefaultMode(config);
-    }
+
+    if (IO::fastSetup) { return startDefaultMode(config); }
 
     std::cout << Setup::PROMT << "\n" << Setup::DEFAULT_MODE << "\n" << Setup::EDIT_MODE << std::endl;
 
@@ -80,7 +81,7 @@ bool UI::setupSequence()
     std::cin >> input;
     switch (input)
     {
-        case Setup::dDEFAULT_MODE_CHAR:
+        case Setup::DEFAULT_MODE_CHAR:
             return startDefaultMode(config);
         break;
 
@@ -96,45 +97,65 @@ bool UI::setupSequence()
 
 bool UI::startDefaultMode(ConfigFile* config)
 {
-    // load
-    // if no config file, create one based on extensions in the folder, cpp fallback if norting is known
-
-    return false;
+    IO::generateVSCodeFiles(config);
+    return true;
 }
 
 bool UI::startEditMode()
 {
-    ConfigFile config = ConfigFile(false);
+    ConfigFile config = ConfigFile();
 
-    // user input and promting
+    std::string langInput;
+    std::cout << Setup::EDIT1; std::cin >> langInput;
+    config.setMode(langInput == "C" ? C : CPP);
+
+    std::string boolIn1;
+    std::cout << Setup::EDIT2; std::cin >> boolIn1;
+    config.setHeaderInSubDirs((boolIn1 == "Y") || (boolIn1 == "y") ? true : false);
+
+    std::string boolIn2;
+    std::cout << Setup::EDIT3; std::cin >> boolIn2;
+    config.setSrcInSubDirs((boolIn2 == "Y") || (boolIn2 == "y") ? true : false);
+
+    std::string definesIn;
+    std::cout << Setup::EDIT4; std::cin >> definesIn;
+    config.setDefines(definesIn);
+
+    std::string otherArgsIn;
+    std::cout << Setup::EDIT5; std::cin >> otherArgsIn;
+    config.setOtherCompilerArgs(otherArgsIn);
+
+    std::string outputPathIn;
+    std::cout << Setup::EDIT6; std::cin >> outputPathIn;
+    config.setOutputProgramName(outputPathIn);
 
     char endPromt;
-    std::cout << "Choose operation:" << std::endl;
-    std::cout << "  A - Apply to current folder" << std::endl;
-    std::cout << "  D - Save as default" << std::endl;
-    std::cout << "  S - Save as default and apply" << std::endl;
-    std::cout << "  C - Cancel and exit" << std::endl;
+    std::cout << Setup::CHOOSE_OPERATION << std::endl;
+    std::cout << Setup::APPLY_TO_CURRENT_FOLDER << std::endl;
+    std::cout << Setup::SAVE_AS_DEFAULT << std::endl;
+    std::cout << Setup::SAVE << std::endl;
+    std::cout << Setup::CANCEL << std::endl;
     std::cin >> endPromt;
 
     switch (endPromt)
     {
-        case 'A':
-            IO::generateVSCodeFiles();
+        case Setup::APPLY_TO_CURRENT_FOLDER.at(1):
+            IO::generateVSCodeFiles(&config);
             return true;
         break;
 
-        case 'D':
-            IO::saveConfigFile();
+        case Setup::SAVE_AS_DEFAULT.at(1):
+            IO::saveConfigFile(&config);
             return true;
         break;
 
-        case 'S':
-            IO::saveConfigFile();
-            IO::generateVSCodeFiles();
+        case Setup::SAVE.at(1):
+            IO::saveConfigFile(&config);
+            IO::generateVSCodeFiles(&config);
             return true;
         break;
 
-        case 'C':
+        case Setup::CANCEL.at(1):
             return false;
         break;
 
@@ -142,14 +163,4 @@ bool UI::startEditMode()
             return false;
         break;
     }
-}
-
-
-// Functions realted to modifications // 
-
-void UI::resetFastSetup()
-{
-    IO::deleteFastSetup();
-    // modify the config file
-
 }
