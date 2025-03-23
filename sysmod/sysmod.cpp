@@ -83,6 +83,7 @@ bool sysmod::firstRunWithAdmin()
     }
 }
 
+//! G++ add to PATH
 void sysmod::addSelfToPath()
 {
     #ifdef _WIN32
@@ -103,7 +104,7 @@ void sysmod::addSelfToPath()
                 // Check if PATH already contains the program
                 if (strstr(currentMPath, ownDir.c_str()) != NULL) { return; }
 
-                //! UPDATE 1.1.: Add gcc to path if not already
+                //! FINISH! ADD G++ PARENT FOLDER TO PATH
                 
                 std::string newPath = std::string(currentMPath) + ";" + ownDir;
                 if (RegSetValueExA(hKey, "Path", 0, REG_SZ, (LPBYTE)newPath.c_str(), newPath.size() + 1) == ERROR_SUCCESS)
@@ -145,7 +146,7 @@ void sysmod::addSelfToPath()
         std::string line;
         while (std::getline(inputFile, line)) { if (line.find(ownDir) != std::string::npos) { inputFile.close(); return; } }
         
-        //! UPDATE 1.1.: Add gcc to path if not already
+        //! FINISH! ADD G++ PARENT FOLDER TO PATH
 
         std::ofstream outputFile(shellConfig, std::ios::app);
         if (outputFile.is_open())
@@ -160,18 +161,7 @@ void sysmod::addSelfToPath()
     saveLibGen();
 }
 
-//! UPDATE 1.1.: Add gcc to path if not already
-void sysmod::addCompilerToPath(std::string compilerPath)
-{
-
-}
-
 void sysmod::saveLibGen()
 {
-    std::filesystem::create_directory(IO::getAppdataPath() / IO::OWN_DIR_NAME);
-
-    #ifdef _WIN32
-        std::string saveLibPath = (IO::getAppdataPath() / IO::OWN_DIR_NAME / IO::FAST_SETUP_FILE_NAME).string();
-        SetFileAttributesA(saveLibPath.c_str(), FILE_ATTRIBUTE_HIDDEN);
-    #endif
+    std::filesystem::create_directory(IO::ownDirPath);
 }

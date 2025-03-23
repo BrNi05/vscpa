@@ -32,6 +32,9 @@ namespace UI
     // Generic information message function
     void infoMsg(std::string msg);
 
+    // Exits the app after a delay
+    void exitDelayed(int delay);
+
 // Functions realted to setup sequence //
 
     // Starts setup sequence, called from main.cpp in normal circumstances
