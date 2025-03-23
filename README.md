@@ -19,8 +19,8 @@
 # Usage
 
 - Create your basic folders and files structure for your C/C++ project.
-- Locate your projects root folder, where the `.vscode` folder shall be.
-- Type `vscpa` in the path bar, hit ENTER.
+- Locate your projects root folder, where the `.vscode` folder should be.
+- Type `vscpa` in VS Code Terminal or in the path bar, hit ENTER.
 - Choose the execution mode.
     - Default mode: generate files based on your previous settings or hard-coded, yet adaptive software defaults.
     - Edit mode: create new config (apply and/or save it as default).
@@ -28,11 +28,23 @@
         - Select language standard (all supported by GCC).
         - Select if headers and .cpp/.c files should be included in compilation.
         - Enter macros that should be defined at project scope. Use `,` marks to separate them.
-        - Enter compiler args separated by `,` marks. (Such as `Wall` or `Werror`).
+        - Enter compiler args separated by `,` marks. (Such as `Wall` or `Werror`, without `-`).
         - Enter output program's name.
 - Open VSCPA with the argument `reset` to disable fast setup.
+    - In VS Code terminal: `vscpa "reset"`.
 - VSCPA terimates execution and restarts in an event of any error (if so, probably IO).
 
+# Technical limitations
+- When using system API calls (eg. from `<shlobj.h>`), you have to include it manually in the task args.
+
 # Future releases and roadmap
-- v1.1: support for auto-add G++, bugfixes
+- v1.0.1: code optimization and bugfixes
+- v1.1: release/debug switch (-g flag) with terminal launch
 - v1.2: better UI, enhanced edit mode
+- v1.3: global and project-scoped default configs
+    - Default config in the project folder and a global one, priorotize project scope first
+    - Multiple reset flags accordingly
+- v1.4: open generated files and edit existing data
+- v1.5: enhanced single file build task
+- v2.0: make file support
+    - Options to further customize the generation process.
