@@ -3,23 +3,27 @@
 
 #include "common.hpp"
 #include <string>
+#include <filesystem>
+
+using Path = std::filesystem::path;
 
 class ConfigFile
 {
     public:
         
         // Load system default if no save is found
-        ConfigFile(bool loadDefault, std::string compilerPath);
+        ConfigFile(bool loadDefault, Path compilerPath, Path debuggerPath);
         ConfigFile();
 
         void setMode(CMode mode);
-        void setStd(CStd cStd);
-        void setStd(CPPStd cppStd);
+        void setCStd(CStd cStd);
+        void setCPPStd(CPPStd cppStd);
         void setHeaderInSubDirs(bool headerInSubDirs);
         void setSrcInSubDirs(bool srcInSubDirs);
         void setDefines(std::string defines);
         void setOtherCompilerArgs(std::string otherCompilerArgs);
         void setCompilerPath(std::string compilerPath);
+        void setDebuggerPath(std::string debuggerPath);
         void setOutputProgramName(std::string outputProgramName);
 
         CMode getMode();
@@ -29,13 +33,14 @@ class ConfigFile
         bool getSrcInSubDirs();
         std::string getDefines();
         std::string getOtherCompilerArgs();
-        std::string getCompilerPath();
+        Path getCompilerPath();
+        Path getDebuggerPath();
         std::string getOutputProgramName();
 
     private:
-        CMode mode;
-        CStd cStd; // if C is used
-        CPPStd cppStd; // if C++ is used
+        CMode mode; // fallback to CPP
+        CStd cStd;
+        CPPStd cppStd; // fallback to C++23
 
         bool headerInSubDirs;
         bool srcInSubDirs;
@@ -43,7 +48,8 @@ class ConfigFile
         std::string defines;
         std::string otherCompilerArgs;
 
-        std::string compilerPath;
+        Path compilerPath;
+        Path debuggerPath;
 
         std::string outputProgramName;
 };

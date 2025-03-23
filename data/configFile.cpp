@@ -1,12 +1,11 @@
 #include "configFile.h"
 #include "../io/io.h"
 
-ConfigFile::ConfigFile(bool loadDefault, std::string compilerPath)
+ConfigFile::ConfigFile(bool loadDefault, Path compilerPath, Path debuggerPath)
 {
     if(loadDefault)
     {
         this->mode = IO::detectCMode();
-        if (this->mode == NONE) { this->mode = CPP; }
         this->cStd = C23;
         this->cppStd = CPP23;
 
@@ -17,6 +16,7 @@ ConfigFile::ConfigFile(bool loadDefault, std::string compilerPath)
         this->otherCompilerArgs = "";
 
         this->compilerPath = compilerPath;
+        this->debuggerPath = debuggerPath;
         this->outputProgramName = "runnable";
     }
     else
@@ -31,12 +31,14 @@ ConfigFile::ConfigFile(bool loadDefault, std::string compilerPath)
         this->defines = config->getDefines();
         this->otherCompilerArgs = config->getOtherCompilerArgs();
         this->compilerPath = config->getCompilerPath();
+        this->debuggerPath = config->getDebuggerPath();
         this->outputProgramName = config->getOutputProgramName();
+
+        delete config;
     }
 }
 
 ConfigFile::ConfigFile() {};
-
 
 // Getters and setters
 
@@ -45,7 +47,7 @@ void ConfigFile::setMode(CMode mode)
     this->mode = mode;
 }
 
-void ConfigFile::setStd(CStd cStd)
+void ConfigFile::setCStd(CStd cStd)
 {
     if (this->mode == C)
     {
@@ -53,7 +55,7 @@ void ConfigFile::setStd(CStd cStd)
     }
 }
 
-void ConfigFile::setStd(CPPStd cppStd)
+void ConfigFile::setCPPStd(CPPStd cppStd)
 {
     if (this->mode == CPP)
     {
@@ -86,6 +88,11 @@ void ConfigFile::setCompilerPath(std::string compilerPath)
     this->compilerPath = compilerPath;
 }
 
+void ConfigFile::setDebuggerPath(std::string debuggerPath)
+{
+    this->debuggerPath = debuggerPath;
+}
+
 void ConfigFile::setOutputProgramName(std::string outputProgramName)
 {
     this->outputProgramName = outputProgramName;
@@ -98,20 +105,12 @@ CMode ConfigFile::getMode()
 
 CStd ConfigFile::getCStd()
 {
-    if (this->mode == C)
-    {
-        return this->cStd;
-    }
-    else { return NOT_C; }
+    return this->cStd; // Returned but not always used (placeholder value)
 }
 
 CPPStd ConfigFile::getCPPStd()
 {
-    if (this->mode == CPP)
-    {
-        return this->cppStd;
-    }
-    else { return NOT_CPP; }
+    return this->cppStd; // Returned but not always used (placeholder value)
 }
 
 bool ConfigFile::getHeaderInSubDirs()
@@ -134,9 +133,14 @@ std::string ConfigFile::getOtherCompilerArgs()
     return this->otherCompilerArgs;
 }
 
-std::string ConfigFile::getCompilerPath()
+Path ConfigFile::getCompilerPath()
 {
     return this->compilerPath;
+}
+
+Path ConfigFile::getDebuggerPath()
+{
+    return this->debuggerPath;
 }
 
 std::string ConfigFile::getOutputProgramName()
