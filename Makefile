@@ -1,13 +1,12 @@
 CXX := g++
-CXXFLAGS := -g -std=c++17 -DMEMTRACE
+CXXFLAGS := -g -std=c++20
 OUTPUT := output
 SRC := main.cpp \
-    devtools/memtrace.cpp \
     console/ui.cpp \
     consts/consts.cpp \
     io/io.cpp \
     sysmod/sysmod.cpp
-INCLUDES := -Iconsole -Iconsts -Idevtools -Iio -Isysmod
+INCLUDES := -Iconsole -Iconsts -Iio -Isysmod
 
 .PHONY: all build run clean
 
