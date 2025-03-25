@@ -46,5 +46,5 @@
     - Multiple reset flags accordingly
 - v1.4: open generated files and edit existing data
 - v1.5: enhanced single file build task
-- v2.0: make file support
+- v2.0: Makefile support
     - Options to further customize the generation process.
