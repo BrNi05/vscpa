@@ -69,6 +69,7 @@ namespace Setup
     inline constexpr std::string_view EDIT4 = "\nDefines (separate with comas[,]):\n";
     inline constexpr std::string_view EDIT5 = "\nOther compiler args (separate with comas[,]):\n";
     inline constexpr std::string_view EDIT6 = "\nOutput program (.exe) name: ";
+    inline constexpr std::string_view EDIT7 = "\nExternal console? (Y/N): ";
 }
 
 #endif // CONSTS_H

@@ -129,6 +129,9 @@ bool UI::startEditMode()
     std::cout << Setup::EDIT6; std::cin >> inputBuffer;
     config.setOutputProgramName(inputBuffer);
 
+    std::cout << Setup::EDIT7; std::cin >> inputBuffer;
+    config.setExternalConsole((inputBuffer == "Y") || (inputBuffer == "y") ? true : false);
+
     char endPromt;
     std::cout << Setup::CHOOSE_OPERATION << std::endl;
     std::cout << Setup::APPLY_TO_CURRENT_FOLDER << std::endl;
