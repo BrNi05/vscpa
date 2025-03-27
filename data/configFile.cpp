@@ -13,7 +13,7 @@ ConfigFile::ConfigFile(bool loadFallback, Path compilerPath, Path debuggerPath)
         this->srcInSubDirs = true;
 
         this->defines = "";
-        this->otherCompilerArgs = "-Wall, -Werror";
+        this->otherCompilerArgs = "Wall, Werror, Wextra, pedantic";
 
         this->compilerPath = compilerPath;
         this->debuggerPath = debuggerPath;
