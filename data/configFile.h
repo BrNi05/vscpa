@@ -11,8 +11,8 @@ class ConfigFile
 {
     public:
         
-        // Load system default if no save is found
-        ConfigFile(bool loadDefault, Path compilerPath, Path debuggerPath);
+        // Load system default (fallback) if no save is found
+        ConfigFile(bool loadFallback, Path compilerPath, Path debuggerPath);
         ConfigFile();
 
         void setMode(CMode mode);

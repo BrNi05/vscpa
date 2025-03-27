@@ -1,9 +1,9 @@
 #include "configFile.h"
 #include "../io/io.h"
 
-ConfigFile::ConfigFile(bool loadDefault, Path compilerPath, Path debuggerPath)
+ConfigFile::ConfigFile(bool loadFallback, Path compilerPath, Path debuggerPath)
 {
-    if(loadDefault)
+    if(loadFallback)
     {
         this->mode = IO::detectCMode();
         this->cStd = C23;
