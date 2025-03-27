@@ -25,6 +25,7 @@ class ConfigFile
         void setCompilerPath(std::string compilerPath);
         void setDebuggerPath(std::string debuggerPath);
         void setOutputProgramName(std::string outputProgramName);
+        void setExternalConsole(bool externalConsole);
 
         CMode getMode();
         CStd getCStd();
@@ -36,6 +37,7 @@ class ConfigFile
         Path getCompilerPath();
         Path getDebuggerPath();
         std::string getOutputProgramName();
+        bool getExternalConsole();
 
     private:
         CMode mode; // fallback to CPP
@@ -52,6 +54,7 @@ class ConfigFile
         Path debuggerPath;
 
         std::string outputProgramName;
+        bool externalConsole;
 };
 
 #endif // CONFIGFILE_H

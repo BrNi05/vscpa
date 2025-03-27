@@ -12,12 +12,13 @@ ConfigFile::ConfigFile(bool loadDefault, Path compilerPath, Path debuggerPath)
         this->headerInSubDirs = true;
         this->srcInSubDirs = true;
 
-        this->defines = "-Wall, -Werror";
-        this->otherCompilerArgs = "";
+        this->defines = "";
+        this->otherCompilerArgs = "-Wall, -Werror";
 
         this->compilerPath = compilerPath;
         this->debuggerPath = debuggerPath;
         this->outputProgramName = "runnable";
+        this->externalConsole = false;
     }
     else
     {
@@ -33,6 +34,7 @@ ConfigFile::ConfigFile(bool loadDefault, Path compilerPath, Path debuggerPath)
         this->compilerPath = config->getCompilerPath();
         this->debuggerPath = config->getDebuggerPath();
         this->outputProgramName = config->getOutputProgramName();
+        this->externalConsole = config->getExternalConsole();
 
         delete config;
     }
@@ -98,6 +100,11 @@ void ConfigFile::setOutputProgramName(std::string outputProgramName)
     this->outputProgramName = outputProgramName;
 }
 
+void ConfigFile::setExternalConsole(bool externalConsole)
+{
+    this->externalConsole = externalConsole;
+}
+
 CMode ConfigFile::getMode()
 {
     return this->mode;
@@ -146,4 +153,9 @@ Path ConfigFile::getDebuggerPath()
 std::string ConfigFile::getOutputProgramName()
 {
     return this->outputProgramName;
+}
+
+bool ConfigFile::getExternalConsole()
+{
+    return this->externalConsole;
 }
