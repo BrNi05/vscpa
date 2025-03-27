@@ -34,12 +34,13 @@
         - Enter output program's name.
         - Select console appearance (external / VS Code Terminal).
 - Open VSCPA with the argument `reset` to disable fast setup.
-    - In VS Code terminal: `vscpa "reset"`.
+    - In VS Code terminal: `vscpa reset`.
 - Open VSCPA with the argument `factory` to perform a factory reset (should be used in case of frequent errors).
 - VSCPA terimates execution and restarts in an event of any error (if so, probably IO).
 
 # Technical details
 - When using system API calls (eg. from `<shlobj.h>` on Windows platform), you must manually include the corresponding header in the task arguments.
+- OS support: Windows 11 23H2 and newer, no compatibility limitations for Linux and macOS.
 - Tested on Windown 11 Pro 24H2 (build 26100.3476) and Linux Manjaro 24.2.1 KDE Plasma (kernel: 6.12.19)
 
 # Future releases and roadmap
