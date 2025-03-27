@@ -136,9 +136,11 @@ Path IO::findDebuggerPath()
     return pathFinder(possiblePaths, "gdb.exe");
 }
 
-Path IO::findCompilerPath(ConfigFile *config)
+Path IO::findCompilerPath(ConfigFile *config = nullptr)
 {
-    std::string compiler = config->getMode() == C ? "gcc.exe" : "g++.exe";
+    std::string compiler;
+    if (config != nullptr) { compiler = (config->getMode() == CPP ? "g++" : "gcc"); }
+    else { compiler = "g++"; }
     
     std::vector<Path> possiblePaths = {
         "C:\\msys64\\mingw64\\bin\\",

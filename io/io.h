@@ -29,7 +29,7 @@ namespace IO
     Path findDebuggerPath();
 
     // Finds compiler path
-    Path findCompilerPath(ConfigFile *config);
+    Path findCompilerPath(ConfigFile *config = nullptr);
 
     // Helper function for the two above
     Path pathFinder(std::vector<Path> possiblePaths, std::string fileName);
