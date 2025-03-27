@@ -352,6 +352,23 @@ void IO::generateVSCodeFiles(ConfigFile *config)
         }}
     };
 
+    // Write to file
+    Path vscFolder = ownDirPath / IO::VSC_FOLDER;
+    Path tasksFilePath = vscFolder / "tasks.json";
+    Path launchFilePath = vscFolder / "launch.json";
+
+    try
+    {
+        std::ofstream tasksFile(tasksFilePath);
+        std::ofstream launchFile(launchFilePath);
+
+        tasksFile << tasks.dump(4);
+        launchFile << launchConfig.dump(4);
+
+        tasksFile.close();
+        launchFile.close();
+    }
+    catch (const std::exception& e) { UI::errorMsg("generateVSCodeFiles - json serialize"); }
 }
 
 bool IO::fastSetupExists()
