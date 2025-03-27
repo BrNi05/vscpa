@@ -29,6 +29,9 @@ namespace sysmod
     // Adds the program to the PATH environment variable
     void addSelfToPath();
 
+    // Notifies Windows that the environment variable has changed
+    void addSelfToPathHelper();
+
     // Creates a save lib and default config file (NO INTERNAL CODE, USINFIED PARSING FUNCS)
     void saveLibGen();
 

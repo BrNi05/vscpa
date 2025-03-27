@@ -6,6 +6,12 @@
 
 int main(int argc, char* argv[])
 {
+    // BETA release - disable execution on not tested platforms
+    #if defined(__linux__) || defined(__APPLE__)
+        UI:infoMsg("BETA release! Only Win11 is supported, yet. Exiting...");
+        UI::exitDelayed(0);
+    #endif
+
     bool canExit = false;
     
     UI::setConsoleTitle(UI::CONSOLE_DEFAULT_TITLE);
@@ -22,8 +28,21 @@ int main(int argc, char* argv[])
     {
         sysmod::addSelfToPath();
         sysmod::saveLibGen();
-        UI::infoMsg(UI::ADMIN_SUCCESS);
-        exit(0);
+        UI::infoMsg(UI::ADMIN_SUCCESS, 0);
+
+        UI::infoMsg(UI::ADMIN_WARNING_2, 0);
+        UI::infoMsg(UI::ADMIN_WARNING_2_EXTRA, 0);
+        UI::infoMsg(UI::ADMIN_WARNING, 0);
+        char input; std::cin >> input;
+        if (input == 'Y' || input == 'y')
+        {
+            sysmod::addSelfToPathHelper();
+            UI::infoMsg(UI::ADMIN_SUCCESS_2Y_1, 0);
+            UI::infoMsg(UI::ADMIN_SUCCESS_2Y, 1);
+        }
+        else { UI::infoMsg(UI::ADMIN_SUCCESS_2N, 1); }
+
+        UI::exitDelayed(2);
     }
     else if (sysmod::firstRun())
     {

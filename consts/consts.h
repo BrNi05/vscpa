@@ -23,9 +23,16 @@ namespace UI
 
     inline constexpr std::string_view RESET_SUCCESS = "Fast setup reset successful! Exiting...";
     inline constexpr std::string_view FACTORY_RESET_SUCCESS = "Factory reset successful! Exiting...";
+    inline constexpr std::string_view FACTORY_RESET_EXTRA = "Environment variables were not cleared. In case of a conflict, please clear them manually.\n";
     inline constexpr std::string_view OPENED_FROM_EXPLORER = "VSCPA was not launched from a directory. Exiting...";
 
     inline constexpr std::string_view ADMIN_SUCCESS = "Admin privileges granted, initial setup completed.";
+    inline constexpr std::string_view ADMIN_WARNING_2 = "\nWARNING! SAVE YOUR WORK! WINDOWS WILL BE PARTIALLY UNRESPONSIVE IF YOU SELECT [Y]!";
+    inline constexpr std::string_view ADMIN_WARNING_2_EXTRA = "Recommended: [N] and follow later instructions.";
+    inline constexpr std::string_view ADMIN_WARNING = "\nexplorer.exe has to be restarted to apply changes. (Y/N)";
+    inline constexpr std::string_view ADMIN_SUCCESS_2N = "Please restart your machine or manually restart explorer.exe to work with VSCPA. Exiting...";
+    inline constexpr std::string_view ADMIN_SUCCESS_2Y_1 = "\nExplorer will restart in about 30 seconds. Please wait.";
+    inline constexpr std::string_view ADMIN_SUCCESS_2Y = "Now, you can use VSCPA from the VS Code Terminal. Exiting...";
 }
 
 namespace Args

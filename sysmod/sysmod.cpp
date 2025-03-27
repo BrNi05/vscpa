@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <thread>
 
 #ifdef _WIN32
     #include <windows.h>
@@ -21,6 +22,9 @@
 bool sysmod::winSysSupported()
 {
     #ifdef _WIN32
+        #ifndef _WIN64
+            return false;
+        #endif
         OSVERSIONINFOEXW osvi = { sizeof(OSVERSIONINFOEXW), 10, 0, 22621 };
         DWORDLONG conditionMask = VerSetConditionMask(0, VER_BUILDNUMBER, VER_GREATER_EQUAL);
         return VerifyVersionInfoW(&osvi, VER_MAJORVERSION | VER_MINORVERSION | VER_BUILDNUMBER, conditionMask);
@@ -126,8 +130,8 @@ void sysmod::addSelfToPath()
                 if (size == 0) { UI::errorMsg("addSelfToPath - RegQueryValueExA str"); }
 
                 std::string compilerPath = IO::findCompilerPath(nullptr).parent_path().string();
-                if (pathQuery.find(compilerPath) == std::string::npos) { pathQuery += ";" + ownDir + ";" + compilerPath; }
-                else { pathQuery += ";" + ownDir; }
+                if (pathQuery.find(compilerPath) == std::string::npos) { pathQuery += (";" + ownDir + ";" + compilerPath + "\\"); }
+                else { pathQuery += (";" + ownDir + "\\"); }
 
                 if (RegSetValueExA(hKey, "Path", 0, REG_SZ, (LPBYTE)pathQuery.c_str(), pathQuery.size() + 1) == ERROR_SUCCESS) { RegCloseKey(hKey); }
                 else { RegCloseKey(hKey); UI::errorMsg("addSelfToPath - RegSetValueExA"); }
@@ -185,6 +189,19 @@ void sysmod::addSelfToPath()
     saveLibGen();
 }
 
+void sysmod::addSelfToPathHelper()
+{
+    #ifdef _WIN32
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        system("taskkill /f /im explorer.exe");
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+        system("start explorer.exe");
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    #else
+        
+    #endif
+}
+
 void sysmod::saveLibGen()
 {
     try
@@ -196,7 +213,6 @@ void sysmod::saveLibGen()
     {
         UI::errorMsg("saveLibGen - create_directory");
     }
-    
 }
 
 void sysmod::factoryReset()
@@ -204,11 +220,10 @@ void sysmod::factoryReset()
     try
     {
         std::filesystem::remove_all(IO::ownDirPath);
-        //! remove from PATH
+        UI::infoMsg(UI::FACTORY_RESET_EXTRA);;
     }
     catch(const std::exception& e)
     {
         UI::errorMsg("factoryReset");
     }
-    
 }
