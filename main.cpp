@@ -16,6 +16,7 @@ int main(int argc, char* argv[])
         * If ran for first time but with no admin rights, restart with elevated privileges
         * Else, start setup sequence
     **/
+
     if (sysmod::firstRunWithAdmin())
     {
         sysmod::addSelfToPath();
@@ -29,12 +30,20 @@ int main(int argc, char* argv[])
     }
     else
     {
+        sysmod::saveLibGen(); // make sure own folders do exist
+        
         if (argc == 2)
         {
             if (std::string(argv[1]) == Args::RESET)
             {
                 IO::resetFastSetup();
                 UI::infoMsg(UI::RESET_SUCCESS.data());
+                UI::exitDelayed(2);
+            }
+            else if (std::string(argv[1]) == Args::FACTORY)
+            {
+                sysmod::factoryReset();
+                UI::infoMsg(UI::FACTORY_RESET_SUCCESS.data());
                 UI::exitDelayed(2);
             }
         }
@@ -44,7 +53,7 @@ int main(int argc, char* argv[])
             UI::infoMsg(UI::OPENED_FROM_EXPLORER.data());
             UI::exitDelayed(2);
         }
-
+        
         while (!canExit)
         {   
             canExit = UI::setupSequence();
