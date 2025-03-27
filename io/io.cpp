@@ -74,8 +74,8 @@ ConfigFile* IO::loadConfigFile()
     }
     else
     {
-        ConfigFile *temp; temp->setMode(detectCMode());
-        return new ConfigFile(true, findCompilerPath(temp), findDebuggerPath());
+        //ConfigFile *temp; temp->setMode(detectCMode());
+        return new ConfigFile(true, findCompilerPath(), findDebuggerPath());
     }
 }
 
@@ -430,5 +430,5 @@ bool IO::startedFromFolder()
     Path exeDir = std::filesystem::canonical(exePath).parent_path();
     Path currentDir = std::filesystem::current_path();
 
-    return !(exeDir == currentDir);
+    return (exeDir == currentDir);
 }
