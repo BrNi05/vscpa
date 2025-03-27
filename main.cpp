@@ -14,8 +14,13 @@ int main(int argc, char* argv[])
 
     bool canExit = false;
     
-    UI::setConsoleTitle(UI::CONSOLE_DEFAULT_TITLE);
-
+    // Resize for initial setup, but not for normal use
+    if (IO::startedFromFolder())
+    {
+        UI::setConsoleSize(90, 40);
+        UI::setConsoleTitle(UI::CONSOLE_DEFAULT_TITLE);
+    }
+    
     // Check for Win support (Win11 only)
     if (!sysmod::winSysSupported())
     {
@@ -69,7 +74,7 @@ int main(int argc, char* argv[])
         }
         
         // Disable direct launch from explorer
-        if (IO::startedFromFolder())
+        if (false) // IO::startedFromFolder()
         {
             UI::infoMsg(UI::OPENED_FROM_EXPLORER);
             UI::exitDelayed(2);

@@ -17,6 +17,9 @@ namespace UI
 {
 // Functions for console management an error messages //  
 
+    // Sets console size
+    void setConsoleSize(int width, int height);
+
     // Sets the console title
     void setConsoleTitle(std::string_view title = UI::CONSOLE_DEFAULT_TITLE);
 
@@ -45,6 +48,11 @@ namespace UI
 
     // Guides user through the process of creating a new config
     bool startEditMode();
+
+// Helper functions
+
+    // capitalize string
+    void capitalize(std::string& str);
 }
 
 #endif // UI_H

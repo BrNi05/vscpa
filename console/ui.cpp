@@ -6,12 +6,23 @@
 #include <iostream>
 #include <thread>
 #include <stdlib.h>
+#include <algorithm>
+#include <string>
 
 #ifdef _WIN32
     #include <windows.h>
 #endif
 
 // Functions for console management an error messages //  
+
+void UI::setConsoleSize(int width, int height)
+{
+    #ifdef _WIN32
+        // Windows terminal cannot be resized from code
+    #else
+        std::cout << "\033[8;" << height << ";" << width << "t" << std::flush;
+    #endif
+}
 
 void UI::setConsoleTitle(std::string_view title)
 {
@@ -82,6 +93,8 @@ bool UI::setupSequence()
 
     char input;
     std::cin >> input;
+    input = toupper(input);
+
     switch (input)
     {
         case Setup::EDIT_MODE.at(1):
@@ -108,25 +121,26 @@ bool UI::startEditMode()
     ConfigFile config = ConfigFile();
     std::string inputBuffer;
 
-    std::cout << Setup::EDIT1; std::cin >> inputBuffer;
+    std::cout << Setup::EDIT1; std::cin >> inputBuffer; capitalize(inputBuffer);
     config.setMode(inputBuffer == "C" ? C : CPP);
 
-    std::cout << Setup::EDIT2; std::cin >> inputBuffer;
+    std::cout << Setup::EDIT2; std::cin >> inputBuffer; capitalize(inputBuffer);
     config.setHeaderInSubDirs((inputBuffer == "Y") || (inputBuffer == "y") ? true : false);
 
-    std::cout << Setup::EDIT3; std::cin >> inputBuffer;
+    std::cout << Setup::EDIT3; std::cin >> inputBuffer; capitalize(inputBuffer);
     config.setSrcInSubDirs((inputBuffer == "Y") || (inputBuffer == "y") ? true : false);
 
-    std::cout << Setup::EDIT4; std::cin >> inputBuffer;
+    std::cin.ignore();
+    std::cout << Setup::EDIT4; std::getline(std::cin, inputBuffer);
     config.setDefines(inputBuffer);
 
-    std::cout << Setup::EDIT5; std::cin >> inputBuffer;
+    std::cout << Setup::EDIT5; std::getline(std::cin, inputBuffer);
     config.setOtherCompilerArgs(inputBuffer);
 
     std::cout << Setup::EDIT6; std::cin >> inputBuffer;
     config.setOutputProgramName(inputBuffer);
 
-    std::cout << Setup::EDIT7; std::cin >> inputBuffer;
+    std::cout << Setup::EDIT7; std::cin >> inputBuffer; capitalize(inputBuffer);
     config.setExternalConsole((inputBuffer == "Y") || (inputBuffer == "y") ? true : false);
 
     char endPromt;
@@ -160,4 +174,11 @@ bool UI::startEditMode()
             return false;
         break;
     }
+}
+
+// Helper functions
+
+void UI::capitalize(std::string& str)
+{
+    std::transform(str.begin(), str.end(), str.begin(), ::toupper);
 }
