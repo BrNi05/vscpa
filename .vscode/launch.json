@@ -5,7 +5,7 @@
             "name": "Debug C++ Program (MAIN BUILDER)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/output",  // Path to the compiled executable
+            "program": "${workspaceFolder}/vscpa",  // Path to the compiled executable
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",  // Working directory
