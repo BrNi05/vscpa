@@ -21,7 +21,7 @@
 bool sysmod::firstRun()
 {
     // No admin rights, just check for own directory
-    return IO::ownDirExists();
+    return !IO::ownDirExists();
 }
 
 void sysmod::restartWithAdmin()
@@ -37,21 +37,24 @@ void sysmod::restartApp(bool withAdmin)
 
         SHELLEXECUTEINFOW sei = { sizeof(sei) };
         if (withAdmin) { sei.lpVerb = L"runas"; }
-        sei.lpFile = appPath;
+        sei.lpFile = L"wt.exe";
+        sei.lpParameters = appPath;
         sei.hwnd = NULL;
         sei.nShow = SW_NORMAL;
 
         if (ShellExecuteExW(&sei)) { exit(0); }
         else { UI::errorMsg("restWAdmin - shellexecute"); }
-
     #else
         char appPath[1024];
         ssize_t pathLength = readlink("/proc/self/exe", appPath, sizeof(appPath) - 1);
         if (pathLength == -1) { UI::errorMsg("restWAdmin - readlink"); }
         appPath[pathLength] = '\0';
         
-        std::string command = withAdmin ? "sudo " + std::string(appPath) : std::string(appPath);
-        system(command.c_str());
+        if (withAdmin) { execlp("sudo", "sudo", appPath, NULL); }
+        else { execlp(appPath, appPath, NULL); }
+
+        //std::string command = withAdmin ? "sudo " + std::string(appPath) : std::string(appPath);
+        //system(command.c_str());
         exit(0);
     #endif
 }
@@ -94,19 +97,33 @@ void sysmod::addSelfToPath()
         ownDir = ownDir.substr(0, ownDir.find_last_of("\\"));
     
         HKEY hKey;
-        if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment", 0, KEY_SET_VALUE, &hKey) == ERROR_SUCCESS)
+        if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment", 0, KEY_SET_VALUE | KEY_QUERY_VALUE | KEY_WOW64_64KEY, &hKey) == ERROR_SUCCESS)
         {
-            char currentMPath[Sysmod::MAX_PATH_LENGTH];
-            DWORD size = sizeof(currentMPath);
+            DWORD size;
+            DWORD type;
 
-            if (RegQueryValueExA(hKey, "Path", NULL, NULL, (LPBYTE)currentMPath, &size) == ERROR_SUCCESS)
+            //Determine size
+            if (RegQueryValueExA(hKey, "Path", NULL, &type, NULL, &size) == ERROR_SUCCESS)
+            {
+                if (type != REG_SZ)
+                {
+                    UI::errorMsg("The 'Path' registry value is not a string."); //! REMOVE
+                    return;
+                }
+            }
+
+            std::vector<char> currentMPath(size);
+
+            if (RegQueryValueExA(hKey, "Path", NULL, &type, (LPBYTE)currentMPath.data(), &size) == ERROR_SUCCESS)
             {
                 // Check if PATH already contains the program
-                if (strstr(currentMPath, ownDir.c_str()) != NULL) { return; }
+                if (strstr(currentMPath.data(), ownDir.c_str()) != NULL) { return; }
+
+                if (size == 0) { UI::errorMsg("addSelfToPath - RegQueryValueExA str"); }
 
                 //! FINISH! ADD G++ PARENT FOLDER TO PATH
                 
-                std::string newPath = std::string(currentMPath) + ";" + ownDir;
+                std::string newPath = std::string(currentMPath.begin(), currentMPath.end()) + ";" + ownDir;
                 if (RegSetValueExA(hKey, "Path", 0, REG_SZ, (LPBYTE)newPath.c_str(), newPath.size() + 1) == ERROR_SUCCESS)
                 {
                     SendMessageTimeoutA(HWND_BROADCAST, WM_SETTINGCHANGE, 0, (LPARAM)"Environment", SMTO_ABORTIFHUNG, 5000, NULL);
@@ -163,5 +180,28 @@ void sysmod::addSelfToPath()
 
 void sysmod::saveLibGen()
 {
-    std::filesystem::create_directory(IO::ownDirPath);
+    try
+    {
+        std::filesystem::create_directory(IO::ownDirPath);
+        std::filesystem::create_directory(IO::ownDirProfilesPath);
+    }
+    catch(const std::exception& e)
+    {
+        UI::errorMsg("saveLibGen - create_directory");
+    }
+    
+}
+
+void sysmod::factoryReset()
+{
+    try
+    {
+        std::filesystem::remove_all(IO::ownDirPath);
+        //! remove from PATH
+    }
+    catch(const std::exception& e)
+    {
+        UI::errorMsg("factoryReset");
+    }
+    
 }

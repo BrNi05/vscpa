@@ -11,6 +11,7 @@ using Path = std::filesystem::path;
 namespace IO
 {
     extern Path ownDirPath;
+    extern Path ownDirProfilesPath;
     extern Path fastSetupFilePath;
     
 // Config file related operations //

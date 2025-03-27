@@ -27,6 +27,7 @@ using JSON = nlohmann::json;
 using Path = std::filesystem::path;
 
 Path IO::ownDirPath = getAppdataPath() / IO::OWN_DIR_NAME;
+Path IO::ownDirProfilesPath = ownDirPath / IO::PROFILES_DIR_NAME;
 Path IO::fastSetupFilePath = ownDirPath / IO::FAST_SETUP_FILE_NAME;
 
 
@@ -48,20 +49,26 @@ ConfigFile* IO::loadConfigFile()
             {
                 switch (lineNum)
                 {
-                    case 0: config->setMode(static_cast<CMode>(std::stoi(line))); break;
-                    case 1: config->setCStd(static_cast<CStd>(std::stoi(line))); break;
-                    case 2: config->setCPPStd(static_cast<CPPStd>(std::stoi(line))); break;
-                    case 3: config->setHeaderInSubDirs(std::stoi(line)); break;
-                    case 4: config->setSrcInSubDirs(std::stoi(line)); break;
-                    case 5: config->setDefines(line); break;
-                    case 6: config->setOtherCompilerArgs(line); break;
-                    case 7: config->setCompilerPath(line); break;
-                    case 8: config->setDebuggerPath(line); break;
-                    case 9: config->setOutputProgramName(line); break;
+                    // case 0 for version check
+                    case 1: config->setMode(static_cast<CMode>(std::stoi(line))); break;
+                    case 2: config->setCStd(static_cast<CStd>(std::stoi(line))); break;
+                    case 3: config->setCPPStd(static_cast<CPPStd>(std::stoi(line))); break;
+                    case 4: config->setHeaderInSubDirs(std::stoi(line)); break;
+                    case 5: config->setSrcInSubDirs(std::stoi(line)); break;
+                    case 6: config->setDefines(line); break;
+                    case 7: config->setOtherCompilerArgs(line); break;
+                    case 8: config->setCompilerPath(line); break;
+                    case 9: config->setDebuggerPath(line); break;
+                    case 10: config->setOutputProgramName(line); break;
+                    case 11: config->setExternalConsole(std::stoi(line)); break;
                 }
                 lineNum++;
             }
             file.close();
+        }
+        else
+        {
+            UI::errorMsg("loadConfigFile - open");
         }
         return config;
     }
@@ -77,6 +84,7 @@ void IO::saveConfigFile(ConfigFile *config)
     std::ofstream file(IO::defaultConfigPath());
     if (file.is_open())
     {
+        file << INTERNAL::PROGRAM_VERSION << std::endl;
         file << static_cast<int>(config->getMode()) << std::endl;
         file << static_cast<int>(config->getCStd()) << std::endl;
         file << static_cast<int>(config->getCPPStd()) << std::endl;
@@ -87,6 +95,7 @@ void IO::saveConfigFile(ConfigFile *config)
         file << config->getCompilerPath() << std::endl;
         file << config->getDebuggerPath() << std::endl;
         file << config->getOutputProgramName() << std::endl;
+        file << (config->getExternalConsole() ? 1 : 0) << std::endl;
 
         file.close();
     }
@@ -98,11 +107,15 @@ CMode IO::detectCMode()
     bool cppFound = false;
     bool cFound = false;
 
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(std::filesystem::current_path()))
+    try
     {
-        if (entry.path().extension() == ".cpp") { cppFound = true; }
-        else if (entry.path().extension() == ".c") { cFound = true; }
+        for (const auto& entry : std::filesystem::recursive_directory_iterator(std::filesystem::current_path()))
+        {
+            if (entry.path().extension() == ".cpp") { cppFound = true; }
+            else if (entry.path().extension() == ".c") { cFound = true; }
+        }
     }
+    catch (const std::exception& e) { UI::errorMsg("detectCMode - recursive_directory_iterator"); }
 
     if (cppFound || !cFound) { return CPP; }
     else { return C; }
@@ -175,10 +188,14 @@ Path IO::pathFinderFallback(std::string compiler)
 
 void IO::generateVSCodeFiles(ConfigFile *config)
 {
-    // Safe delete existing .vscode folder and content
+    // Make sure .vscode folder exists
+    try { std::filesystem::create_directory(IO::VSC_FOLDER); }
+    catch (const std::exception& e) { UI::errorMsg("generateVSCodeFiles - create_directory"); }
+    
+    // Safe delete existing .vscode folder content
     try
     {
-        for (const auto& entry : std::filesystem::directory_iterator(".vscode"))
+        for (const auto& entry : std::filesystem::directory_iterator(IO::VSC_FOLDER))
         {
             // check if filename is tasks.json or launch.json
             if (entry.path().filename() == "tasks.json" || entry.path().filename() == "launch.json")
@@ -217,17 +234,19 @@ void IO::generateVSCodeFiles(ConfigFile *config)
     std::vector<Path> files;
     if (config->getSrcInSubDirs())
     {
-        for (const auto& entry : std::filesystem::recursive_directory_iterator(std::filesystem::current_path()))
+        for (auto entry = std::filesystem::recursive_directory_iterator(std::filesystem::current_path(), std::filesystem::directory_options::skip_permission_denied); entry != std::filesystem::recursive_directory_iterator(); ++entry)
         {
-            if (entry.path().extension() == ".c" || entry.path().extension() == ".cpp")
+            if (entry->is_directory() && entry->path().filename().string().find(IO::IGNORE_FOLDER) != std::string::npos) { entry.disable_recursion_pending(); continue; }
+            
+            if (entry->path().extension() == ".c" || entry->path().extension() == ".cpp")
             {
-                files.push_back(entry.path().filename());
+                files.push_back(entry->path().filename());
             }
         }
     }
     else
     {
-        for (const auto& entry : std::filesystem::directory_iterator(std::filesystem::current_path()))
+        for (const auto& entry : std::filesystem::directory_iterator(std::filesystem::current_path(), std::filesystem::directory_options::skip_permission_denied))
         {
             if (entry.path().extension() == ".c" || entry.path().extension() == ".cpp")
             {
@@ -240,11 +259,13 @@ void IO::generateVSCodeFiles(ConfigFile *config)
     Path basePath = std::filesystem::current_path();
     if (config->getHeaderInSubDirs())
     {
-        for (const auto& entry : std::filesystem::recursive_directory_iterator(basePath))
+        for (auto entry = std::filesystem::recursive_directory_iterator(std::filesystem::current_path(), std::filesystem::directory_options::skip_permission_denied); entry != std::filesystem::recursive_directory_iterator(); ++entry)
         {
-            if (entry.path().extension() == ".h" || entry.path().extension() == ".hpp")
+            if (entry->is_directory() && entry->path().filename().string().find(IO::IGNORE_FOLDER) != std::string::npos) { entry.disable_recursion_pending(); continue; }
+            
+            if (entry->path().extension() == ".h" || entry->path().extension() == ".hpp")
             {
-                Path relativePath = std::filesystem::relative(entry.path(), basePath);
+                Path relativePath = std::filesystem::relative(entry->path(), basePath);
                 includes.insert(relativePath.parent_path());
             }
         }
@@ -310,7 +331,8 @@ void IO::generateVSCodeFiles(ConfigFile *config)
                 {"stopAtEntry", false},
                 {"cwd", "${workspaceFolder}"},
                 {"environment", JSON::array()},
-                {"externalConsole", true},
+                {"externalConsole", config->getExternalConsole()},
+                {"console", (config->getExternalConsole() ? "externalTerminal" : "integratedTerminal")},
                 {"MIMode", "gdb"},
                 {"setupCommands", {
                     {
@@ -337,7 +359,12 @@ bool IO::fastSetupExists()
 
 void IO::resetFastSetup()
 {
-    if (fastSetupExists()) { std::filesystem::remove(fastSetupFilePath); }
+    try
+    {
+        if (fastSetupExists()) { std::filesystem::remove(fastSetupFilePath); }
+    }
+    catch(const std::exception& e) { UI::errorMsg("resetFastSetup - remove"); }
+    
 }
 
 
@@ -365,7 +392,7 @@ Path IO::getAppdataPath()
 
 bool IO::ownDirExists()
 {
-    return std::filesystem::exists(ownDirPath) && std::filesystem::is_directory(ownDirPath);
+    return (std::filesystem::exists(ownDirPath) && std::filesystem::is_directory(ownDirPath));
 }
 
 Path IO::defaultConfigPath()

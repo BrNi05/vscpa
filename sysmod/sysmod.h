@@ -28,6 +28,9 @@ namespace sysmod
 
     // Creates a save lib and default config file (NO INTERNAL CODE, USINFIED PARSING FUNCS)
     void saveLibGen();
+
+    // Factory resets VSCPA
+    void factoryReset();
 }
 
 #endif // SYSMOD_H
