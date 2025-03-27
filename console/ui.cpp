@@ -47,7 +47,7 @@ void UI::clearConsole()
 
 void UI::warnFirstRun()
 {
-    std::cout << UI::GREETING_1 << std::endl << UI::GREETING_2 << std::endl;
+    std::cout << UI::GREETING_1 << std::endl << UI::GREETING_2;
         
     std::this_thread::sleep_for(std::chrono::seconds(2));
     sysmod::restartWithAdmin();
@@ -61,7 +61,7 @@ void UI::errorMsg(std::string where)
     sysmod::restartApp();
 }
 
-void UI::infoMsg(std::string msg)
+void UI::infoMsg(std::string_view msg)
 {
     std::cout << msg << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(2));

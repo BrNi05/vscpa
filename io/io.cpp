@@ -136,7 +136,7 @@ Path IO::findDebuggerPath()
     return pathFinder(possiblePaths, "gdb.exe");
 }
 
-Path IO::findCompilerPath(ConfigFile *config = nullptr)
+Path IO::findCompilerPath(ConfigFile *config)
 {
     std::string compiler;
     if (config != nullptr) { compiler = (config->getMode() == CPP ? "g++" : "gcc"); }

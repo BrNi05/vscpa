@@ -13,6 +13,8 @@ namespace UI
 {
     inline constexpr std::string_view CONSOLE_DEFAULT_TITLE = "VSCPA (v1.0.0)";
 
+    inline constexpr std::string_view WINSYS_NOT_SUPPORTED = "VSCPA only supports Windows 11! Exiting...";
+
     inline constexpr std::string_view GREETING_1 = "Welcome to VS Code Project Assistant!";
     inline constexpr std::string_view GREETING_2 = "\nSetup requires admin privileges, restarting...";
 

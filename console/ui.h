@@ -30,7 +30,7 @@ namespace UI
     void errorMsg(std::string where);
 
     // Generic information message function
-    void infoMsg(std::string msg);
+    void infoMsg(std::string_view msg);
 
     // Exits the app after a delay
     void exitDelayed(int delay);
