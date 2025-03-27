@@ -47,24 +47,21 @@ void UI::clearConsole()
 
 void UI::warnFirstRun()
 {
-    std::cout << UI::GREETING_1 << std::endl << UI::GREETING_2;
-        
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    infoMsg(UI::GREETING_1, 0); infoMsg(UI::GREETING_2);
     sysmod::restartWithAdmin();
 }
 
 void UI::errorMsg(std::string where)
 {
     std::cout << UI::ERROR_MSG_1 << where << std::endl;
-    std::cout << UI::ERROR_MSG_2 << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    infoMsg(UI::ERROR_MSG_2);
     sysmod::restartApp();
 }
 
-void UI::infoMsg(std::string_view msg)
+void UI::infoMsg(std::string_view msg, int delay)
 {
     std::cout << msg << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    std::this_thread::sleep_for(std::chrono::seconds(delay));
 }
 
 void UI::exitDelayed(int delay)
