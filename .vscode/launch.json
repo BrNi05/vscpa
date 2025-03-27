@@ -5,13 +5,13 @@
             "name": "Debug C++ Program (MAIN BUILDER)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/vscpa",  // Path to the compiled executable
+            "program": "${workspaceFolder}/vscpa",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",  // Working directory
+            "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": true,
-            "MIMode": "gdb",  // Specify GDB for debugging
+            "MIMode": "gdb",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -22,8 +22,8 @@
             "logging": {
                 "engineLogging": true
             },
-            "preLaunchTask": "MAIN BUILDER",  // Task to build the code
-            "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe"  // Update if you are on a Windows machine, and use a different gdb path
+            "preLaunchTask": "MAIN BUILDER",
+            "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe"
         }
     ]
 }

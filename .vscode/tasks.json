@@ -15,15 +15,14 @@
                 "data/configFile.cpp",
                 "io/io.cpp",
                 "sysmod/sysmod.cpp",
-		        "-Iconsole",
-		        "-Iconsts",
+		"-Iconsole",
+		"-Iconsts",
                 "-Idata",
-		        "-Iio",
-		        "-Isysmod",
+		"-Iio",
+		"-Isysmod",
                 "-Ijson",
                 "-lole32",
                 "-lshell32"
-
             ],
             "group": "build",
             "problemMatcher": [
