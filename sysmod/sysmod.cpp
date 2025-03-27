@@ -18,6 +18,17 @@
 #endif
 
 
+bool sysmod::winSysSupported()
+{
+    #ifdef _WIN32
+        OSVERSIONINFOEXW osvi = { sizeof(OSVERSIONINFOEXW), 10, 0, 22621 };
+        DWORDLONG conditionMask = VerSetConditionMask(0, VER_BUILDNUMBER, VER_GREATER_EQUAL);
+        return VerifyVersionInfoW(&osvi, VER_MAJORVERSION | VER_MINORVERSION | VER_BUILDNUMBER, conditionMask);
+    #else
+        return true;
+    #endif
+}
+
 bool sysmod::firstRun()
 {
     // No admin rights, just check for own directory
@@ -86,7 +97,6 @@ bool sysmod::firstRunWithAdmin()
     }
 }
 
-//! G++ add to PATH
 void sysmod::addSelfToPath()
 {
     #ifdef _WIN32
@@ -103,33 +113,24 @@ void sysmod::addSelfToPath()
             DWORD type;
 
             //Determine size
-            if (RegQueryValueExA(hKey, "Path", NULL, &type, NULL, &size) == ERROR_SUCCESS)
-            {
-                if (type != REG_SZ)
-                {
-                    UI::errorMsg("The 'Path' registry value is not a string."); //! REMOVE
-                    return;
-                }
-            }
+            if (!RegQueryValueExA(hKey, "Path", NULL, &type, NULL, &size) == ERROR_SUCCESS) { UI::errorMsg("addSelfToPath - RegQueryValueExA size"); }
 
             std::vector<char> currentMPath(size);
 
             if (RegQueryValueExA(hKey, "Path", NULL, &type, (LPBYTE)currentMPath.data(), &size) == ERROR_SUCCESS)
             {
                 // Check if PATH already contains the program
-                if (strstr(currentMPath.data(), ownDir.c_str()) != NULL) { return; }
+                std::string pathQuery(currentMPath.begin(), currentMPath.end() - 1);
+                if (pathQuery.find(ownDir) != std::string::npos) { return; }
 
                 if (size == 0) { UI::errorMsg("addSelfToPath - RegQueryValueExA str"); }
 
-                //! FINISH! ADD G++ PARENT FOLDER TO PATH
-                
-                std::string newPath = std::string(currentMPath.begin(), currentMPath.end()) + ";" + ownDir;
-                if (RegSetValueExA(hKey, "Path", 0, REG_SZ, (LPBYTE)newPath.c_str(), newPath.size() + 1) == ERROR_SUCCESS)
-                {
-                    SendMessageTimeoutA(HWND_BROADCAST, WM_SETTINGCHANGE, 0, (LPARAM)"Environment", SMTO_ABORTIFHUNG, 5000, NULL);
-                    RegCloseKey(hKey);
-                }
-                else { UI::errorMsg("addSelfToPath - RegSetValueExA"); }
+                std::string compilerPath = IO::findCompilerPath(nullptr).parent_path().string();
+                if (pathQuery.find(compilerPath) == std::string::npos) { pathQuery += ";" + ownDir + ";" + compilerPath; }
+                else { pathQuery += ";" + ownDir; }
+
+                if (RegSetValueExA(hKey, "Path", 0, REG_SZ, (LPBYTE)pathQuery.c_str(), pathQuery.size() + 1) == ERROR_SUCCESS) { RegCloseKey(hKey); }
+                else { RegCloseKey(hKey); UI::errorMsg("addSelfToPath - RegSetValueExA"); }
             }
             else { UI::errorMsg("addSelfToPath - RegQueryValueExA"); }
         }
@@ -158,18 +159,24 @@ void sysmod::addSelfToPath()
         if (shell && strstr(shell, "zsh")) { shellConfig = homeDir + "/.zshrc"; }
         else { shellConfig = homeDir + "/.bashrc"; }
 
-        // Check if PATH already contains the program
+        // Check if PATH already contains the program and g++
+        bool compilerInPath = false;
         std::ifstream inputFile(shellConfig);
         std::string line;
-        while (std::getline(inputFile, line)) { if (line.find(ownDir) != std::string::npos) { inputFile.close(); return; } }
+        while (std::getline(inputFile, line))
+        {
+            if (line.find(ownDir) != std::string::npos) { inputFile.close(); return; }
+            if (line.find("g++") != std::string::npos) { compilerInPath = true; }
+        }
         
-        //! FINISH! ADD G++ PARENT FOLDER TO PATH
+        std::string compilerPath = IO::findCompilerPath(nullptr).parent_path().string();
 
         std::ofstream outputFile(shellConfig, std::ios::app);
         if (outputFile.is_open())
         {
             std::ofstream outputFile(shellConfig, std::ios::app);
-            outputFile << "\nexport PATH=\"" << ownPath << ":$PATH\"\n";
+            outputFile << "\nexport PATH=\"" << ownDir << ":$PATH\"\n";
+            if (!compilerInPath) { outputFile << "export PATH=\"" << compilerPath << ":$PATH\"\n"; }
             outputFile.close();
         }
         else { UI::errorMsg("addSelfToPath - ofstream"); }

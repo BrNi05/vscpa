@@ -11,6 +11,9 @@
 
 namespace sysmod
 {
+    // Checks Windows compatibility
+    bool winSysSupported();
+    
     // Detects if the program is ran for the first time
     bool firstRun();
 

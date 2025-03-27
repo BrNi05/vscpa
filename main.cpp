@@ -10,18 +10,19 @@ int main(int argc, char* argv[])
     
     UI::setConsoleTitle(UI::CONSOLE_DEFAULT_TITLE);
 
-    /**
-        * Checks for command line arguments (used for resetting fast setup)
-        * If ran for first time with admin, add itself to PATH and setup
-        * If ran for first time but with no admin rights, restart with elevated privileges
-        * Else, start setup sequence
-    **/
+    // Check for Win support (Win11 only)
+    if (!sysmod::winSysSupported())
+    {
+        UI::infoMsg(UI::WINSYS_NOT_SUPPORTED);
+        UI::exitDelayed(0);
+    }
 
+    // Runs after install
     if (sysmod::firstRunWithAdmin())
     {
         sysmod::addSelfToPath();
         sysmod::saveLibGen();
-        UI::infoMsg(UI::ADMIN_SUCCESS.data());
+        UI::infoMsg(UI::ADMIN_SUCCESS);
         exit(0);
     }
     else if (sysmod::firstRun())
@@ -37,20 +38,21 @@ int main(int argc, char* argv[])
             if (std::string(argv[1]) == Args::RESET)
             {
                 IO::resetFastSetup();
-                UI::infoMsg(UI::RESET_SUCCESS.data());
+                UI::infoMsg(UI::RESET_SUCCESS);
                 UI::exitDelayed(2);
             }
             else if (std::string(argv[1]) == Args::FACTORY)
             {
                 sysmod::factoryReset();
-                UI::infoMsg(UI::FACTORY_RESET_SUCCESS.data());
+                UI::infoMsg(UI::FACTORY_RESET_SUCCESS);
                 UI::exitDelayed(2);
             }
         }
         
+        // Disable direct launch from explorer
         if (IO::startedFromFolder())
         {
-            UI::infoMsg(UI::OPENED_FROM_EXPLORER.data());
+            UI::infoMsg(UI::OPENED_FROM_EXPLORER);
             UI::exitDelayed(2);
         }
         
