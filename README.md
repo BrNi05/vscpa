@@ -30,6 +30,10 @@
     - Edit mode: create new config (apply and/or save it as default).
         - Select language. Currently supported: C, C++
         - Select language standard (all supported by GCC).
+            - VSCPA expects only az integer as input. Upon no or invalid input, the latest standard is selected.
+            - Current standards:
+                - C: 89, 90, 95, 99, 11, 17, 23
+                - CPP: 98, 03, 11, 14, 17, 20, 23
         - Select if nested headers and .cpp/.c files should be included in compilation.
             - VSCPA ignores folders that has `vscpa_ignore` in their names during this process.
         - Enter macros that should be defined at project scope. Use `,` marks to separate them.
