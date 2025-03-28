@@ -11,6 +11,8 @@
 #include <algorithm>
 #include <unordered_set>
 #include <vector>
+#include <string>
+#include <sstream>
 
 #include "../json/json.hpp"
 
@@ -193,20 +195,6 @@ void IO::generateVSCodeFiles(ConfigFile *config)
     // Make sure .vscode folder exists
     try { std::filesystem::create_directory(IO::VSC_FOLDER); }
     catch (const std::exception& e) { UI::errorMsg("generateVSCodeFiles - create_directory"); }
-    
-    // Safe delete existing .vscode folder content
-    try
-    {
-        for (const auto& entry : std::filesystem::directory_iterator(IO::VSC_FOLDER))
-        {
-            // check if filename is tasks.json or launch.json
-            if (entry.path().filename() == "tasks.json" || entry.path().filename() == "launch.json")
-            {
-                std::filesystem::remove(entry.path());
-            }
-        }
-    }
-    catch (const std::exception& e) { UI::errorMsg("generateVSCodeFiles - remove_all"); }
 
     // tasks.json - args //
     
@@ -217,32 +205,33 @@ void IO::generateVSCodeFiles(ConfigFile *config)
         config->getOutputProgramName(),
     };
 
-    std::vector<std::string> defines;
-    char *token = strtok(config->getDefines().data(), ",");
-    while (token != NULL)
+    std::stringstream ss1(config->getDefines());
+    std::string temp1;
+    while (std::getline(ss1, temp1, ','))
     {
-        args.push_back("-D" + std::string(token));
-        token = strtok(NULL, ",");
+        args.push_back(std::string("-D" + temp1));
     }
 
-    std::vector<std::string> otherCompArgs;
-    token = strtok(config->getOtherCompilerArgs().data(), ",");
-    while (token != NULL)
+    std::stringstream ss2(config->getOtherCompilerArgs());
+    std::string temp2;
+
+    while (std::getline(ss2, temp2, ','))
     {
-        args.push_back(std::string(token));
-        token = strtok(NULL, ",");
+        args.push_back(temp2);
     }
 
-    std::vector<Path> files;
     if (config->getSrcInSubDirs())
     {
+        Path absolutePath = std::filesystem::absolute(std::filesystem::current_path());
+        
         for (auto entry = std::filesystem::recursive_directory_iterator(std::filesystem::current_path(), std::filesystem::directory_options::skip_permission_denied); entry != std::filesystem::recursive_directory_iterator(); ++entry)
         {
             if (entry->is_directory() && entry->path().filename().string().find(IO::IGNORE_FOLDER) != std::string::npos) { entry.disable_recursion_pending(); continue; }
             
             if (entry->path().extension() == ".c" || entry->path().extension() == ".cpp")
             {
-                files.push_back(entry->path().filename());
+                Path relativePath = std::filesystem::relative(entry->path(), absolutePath);
+                args.push_back(relativePath.generic_string());
             }
         }
     }
@@ -257,7 +246,7 @@ void IO::generateVSCodeFiles(ConfigFile *config)
         }
     }
     
-    std::unordered_set<Path> includes;
+    std::unordered_set<Path> includes; // to avoid double includes
     Path basePath = std::filesystem::current_path();
     if (config->getHeaderInSubDirs())
     {
@@ -272,7 +261,7 @@ void IO::generateVSCodeFiles(ConfigFile *config)
             }
         }
     }
-    if (config->getHeaderInSubDirs()) { for (const auto& include : includes) args.push_back("-I" + include.string()); } // to avoid double includes
+    if (config->getHeaderInSubDirs()) { for (const auto& include : includes) args.push_back("-I" + include.string()); }
 
     // tasks.json - tasks
 
@@ -353,14 +342,14 @@ void IO::generateVSCodeFiles(ConfigFile *config)
     };
 
     // Write to file
-    Path vscFolder = ownDirPath / IO::VSC_FOLDER;
+    Path vscFolder = std::filesystem::current_path() / IO::VSC_FOLDER;
     Path tasksFilePath = vscFolder / "tasks.json";
     Path launchFilePath = vscFolder / "launch.json";
 
     try
     {
-        std::ofstream tasksFile(tasksFilePath);
-        std::ofstream launchFile(launchFilePath);
+        std::ofstream tasksFile(tasksFilePath, std::ios::trunc);
+        std::ofstream launchFile(launchFilePath, std::ios::trunc);
 
         tasksFile << tasks.dump(4);
         launchFile << launchConfig.dump(4);
