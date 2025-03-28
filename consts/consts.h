@@ -53,7 +53,7 @@ namespace IO
 {
     inline constexpr std::string_view OWN_DIR_NAME = ".vsCodeProjectAssistant";
     inline constexpr std::string_view FAST_SETUP_FILE_NAME = "fastSetup.txt";
-    inline constexpr std::string_view DEFAULT_CONFIG_FILE_NAME = "defaultConfig.json";
+    inline constexpr std::string_view DEFAULT_CONFIG_FILE_NAME = "defaultConfig.txt";
     inline constexpr std::string_view PROFILES_DIR_NAME = "profiles";
     inline constexpr std::string_view VSC_FOLDER = ".vscode";
 
@@ -71,13 +71,14 @@ namespace Setup
     inline constexpr std::string_view DEFAULT_MODE = " D - Default mode";
     inline constexpr std::string_view EDIT_MODE = " E - Edit mode";
 
-    inline constexpr std::string_view CHOOSE_OPERATION = "Choose an operation:\n";
+    inline constexpr std::string_view CHOOSE_OPERATION = "\nChoose an operation:\n";
     inline constexpr std::string_view APPLY_TO_CURRENT_FOLDER = " A - Apply to current folder";
     inline constexpr std::string_view SAVE_AS_DEFAULT = " D - Save as default";
     inline constexpr std::string_view SAVE = " S - Save as default and apply";
     inline constexpr std::string_view CANCEL = " C - Cancel and exit";
 
     inline constexpr std::string_view EDIT1 = "\nSelect language ('C'/'CPP'): ";
+    inline constexpr std::string_view EDIT1_2 = "\nSelect C/CPP standard (ENTER: C23/CPP23): ";
     inline constexpr std::string_view EDIT2 = "\nHeader files in subdirectories? (Y/N): ";
     inline constexpr std::string_view EDIT3 = "\nSource files in subdirectories? (Y/N): ";
     inline constexpr std::string_view EDIT4 = "\nDefines (separate ONLY with comas[,]):\n";
