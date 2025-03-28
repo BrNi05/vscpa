@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
         }
         
         // Disable direct launch from explorer
-        if (false) // IO::startedFromFolder()
+        if (IO::startedFromFolder())
         {
             UI::infoMsg(UI::OPENED_FROM_EXPLORER);
             UI::exitDelayed(2);
