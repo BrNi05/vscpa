@@ -75,8 +75,8 @@ namespace Setup
     inline constexpr std::string_view EDIT1 = "\nSelect language ('C'/'CPP'): ";
     inline constexpr std::string_view EDIT2 = "\nHeader files in subdirectories? (Y/N): ";
     inline constexpr std::string_view EDIT3 = "\nSource files in subdirectories? (Y/N): ";
-    inline constexpr std::string_view EDIT4 = "\nDefines (separate with comas[,]):\n";
-    inline constexpr std::string_view EDIT5 = "\nOther compiler args (separate with comas[,]):\n";
+    inline constexpr std::string_view EDIT4 = "\nDefines (separate ONLY with comas[,]):\n";
+    inline constexpr std::string_view EDIT5 = "\nOther compiler args (separate ONLY with comas[,]):\n";
     inline constexpr std::string_view EDIT6 = "\nOutput program (.exe) name: ";
     inline constexpr std::string_view EDIT7 = "\nExternal console? (Y/N): ";
 }

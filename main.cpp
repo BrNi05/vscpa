@@ -4,6 +4,8 @@
 #include "./console/ui.h"
 #include "./io/io.h"
 
+#include <iostream>
+
 int main(int argc, char* argv[])
 {
     // BETA release - disable execution on not tested platforms

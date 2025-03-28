@@ -1,14 +1,6 @@
 #ifndef SYSMOD_H
 #define SYSMOD_H
 
-#include <string>
-
-#ifdef _WIN32
-    #include <windows.h>
-#else
-    #include <unistd.h>
-#endif
-
 namespace sysmod
 {
     // Checks Windows compatibility
