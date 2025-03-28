@@ -46,6 +46,9 @@ namespace IO
     // Checks if the fast setup marking file exists
     bool fastSetupExists();
 
+    // Creates the fast setup marking file
+    void enableFastSetup();
+
     // Deletes the fast setup marking file
     void resetFastSetup();
 

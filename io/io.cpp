@@ -217,7 +217,7 @@ void IO::generateVSCodeFiles(ConfigFile *config)
 
     while (std::getline(ss2, temp2, ','))
     {
-        args.push_back(temp2);
+        args.push_back(("-" + temp2));
     }
 
     if (config->getSrcInSubDirs())
@@ -250,18 +250,23 @@ void IO::generateVSCodeFiles(ConfigFile *config)
     Path basePath = std::filesystem::current_path();
     if (config->getHeaderInSubDirs())
     {
+        Path relativePath;
+        
         for (auto entry = std::filesystem::recursive_directory_iterator(std::filesystem::current_path(), std::filesystem::directory_options::skip_permission_denied); entry != std::filesystem::recursive_directory_iterator(); ++entry)
         {
             if (entry->is_directory() && entry->path().filename().string().find(IO::IGNORE_FOLDER) != std::string::npos) { entry.disable_recursion_pending(); continue; }
             
             if (entry->path().extension() == ".h" || entry->path().extension() == ".hpp")
             {
-                Path relativePath = std::filesystem::relative(entry->path(), basePath);
+                relativePath = std::filesystem::relative(entry->path(), basePath);
+                if (relativePath.parent_path().empty()) { continue; } // skip root dir headers
                 includes.insert(relativePath.parent_path());
             }
         }
+
+        for (const auto& include : includes) { args.push_back("-I" + include.string()); }
     }
-    if (config->getHeaderInSubDirs()) { for (const auto& include : includes) args.push_back("-I" + include.string()); }
+    
 
     // tasks.json - tasks
 
@@ -323,7 +328,7 @@ void IO::generateVSCodeFiles(ConfigFile *config)
                 {"cwd", "${workspaceFolder}"},
                 {"environment", JSON::array()},
                 {"externalConsole", config->getExternalConsole()},
-                {"console", (config->getExternalConsole() ? "externalTerminal" : "integratedTerminal")},
+                //{"console", (config->getExternalConsole() ? "externalTerminal" : "integratedTerminal")},
                 {"MIMode", "gdb"},
                 {"setupCommands", {
                     {
@@ -335,7 +340,7 @@ void IO::generateVSCodeFiles(ConfigFile *config)
                 {"logging", {
                     {"engineLogging", true}
                 }},
-                {"preLaunchTask", "VSCPA BUILD TASK"},
+                {"preLaunchTask", "VSCPA MAIN BUILD TASK"},
                 {"miDebuggerPath", findDebuggerPath()}
             }
         }}
@@ -363,6 +368,15 @@ void IO::generateVSCodeFiles(ConfigFile *config)
 bool IO::fastSetupExists()
 {
     return std::filesystem::exists(fastSetupFilePath);
+}
+
+void IO::enableFastSetup()
+{
+    if (!IO::fastSetupExists())
+    {
+        try { std::ofstream file(fastSetupFilePath); }
+        catch (const std::exception& e) { UI::errorMsg("enableFastSetup - ofstream"); }
+    }
 }
 
 void IO::resetFastSetup()

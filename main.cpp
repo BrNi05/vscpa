@@ -59,27 +59,45 @@ int main(int argc, char* argv[])
     {
         sysmod::saveLibGen(); // make sure own folders do exist
         
-        if (argc == 2)
+        if (argc >= 2)
         {
-            if (std::string(argv[1]) == Args::RESET)
+            if (std::string(argv[1]) == Args::FAST_SETUP_OFF)
             {
                 IO::resetFastSetup();
-                UI::infoMsg(UI::RESET_SUCCESS);
-                UI::exitDelayed(2);
+                UI::infoMsg(UI::RESET_SUCCESS, 0);
+                UI::exitDelayed(1);
+            }
+            else if (std::string(argv[1]) == Args::FAST_SETUP_ON)
+            {
+                IO::enableFastSetup();
+                UI::infoMsg(UI::ENABLE_SUCCESS, 0);
+                UI::exitDelayed(1);
             }
             else if (std::string(argv[1]) == Args::FACTORY)
             {
                 sysmod::factoryReset();
-                UI::infoMsg(UI::FACTORY_RESET_SUCCESS);
-                UI::exitDelayed(2);
+                UI::infoMsg(UI::FACTORY_RESET_SUCCESS, 0);
+                UI::exitDelayed(1);
+            }
+            else if (std::string(argv[1]) == Args::HELP)
+            {
+                UI::infoMsg(UI::HELP_MENU, 1);
+                UI::openGitHubPage();
+                UI::exitDelayed(1);
+            }
+            else
+            {
+                UI::infoMsg(UI::UNREC_CMD, 1);
+                UI::openGitHubPage();
+                UI::exitDelayed(1);
             }
         }
         
         // Disable direct launch from explorer
         if (IO::startedFromFolder())
         {
-            UI::infoMsg(UI::OPENED_FROM_EXPLORER);
-            UI::exitDelayed(2);
+            UI::infoMsg(UI::OPENED_FROM_EXPLORER, 2);
+            UI::exitDelayed(0);
         }
         
         while (!canExit)

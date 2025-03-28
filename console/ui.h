@@ -53,6 +53,12 @@ namespace UI
 
     // capitalize string
     void capitalize(std::string& str);
+
+    // capitalize char
+    void capitalize(char& c);
+
+    // Opens browser with the GitHub page of the project
+    void openGitHubPage();
 }
 
 #endif // UI_H

@@ -132,9 +132,11 @@ bool UI::startEditMode()
 
     std::cin.ignore();
     std::cout << Setup::EDIT4; std::getline(std::cin, inputBuffer);
+    inputBuffer.erase(std::remove_if(inputBuffer.begin(), inputBuffer.end(), ::isspace), inputBuffer.end());
     config.setDefines(inputBuffer);
 
     std::cout << Setup::EDIT5; std::getline(std::cin, inputBuffer);
+    inputBuffer.erase(std::remove_if(inputBuffer.begin(), inputBuffer.end(), ::isspace), inputBuffer.end());
     config.setOtherCompilerArgs(inputBuffer);
 
     std::cout << Setup::EDIT6; std::cin >> inputBuffer;
@@ -149,7 +151,7 @@ bool UI::startEditMode()
     std::cout << Setup::SAVE_AS_DEFAULT << std::endl;
     std::cout << Setup::SAVE << std::endl;
     std::cout << Setup::CANCEL << std::endl;
-    std::cin >> endPromt;
+    std::cin >> endPromt; capitalize(endPromt);
 
     switch (endPromt)
     {
@@ -181,4 +183,24 @@ bool UI::startEditMode()
 void UI::capitalize(std::string& str)
 {
     std::transform(str.begin(), str.end(), str.begin(), ::toupper);
+}
+
+void UI::capitalize(char& c)
+{
+    c = toupper(c);
+}
+
+void UI::openGitHubPage()
+{
+    std::string url = "https://github.com/BrNi05/proj-assist";
+
+    #ifdef _WIN32
+        std::string command = "start " + url;
+    #elif __APPLE__
+        std::string command = "open " + url;
+    #elif __linux__
+        std::string command = "xdg-open " + url;
+    #endif
+
+    system(command.c_str());
 }

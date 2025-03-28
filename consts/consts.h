@@ -21,7 +21,11 @@ namespace UI
     inline constexpr std::string_view ERROR_MSG_1 = "An error occurred in component: ";
     inline constexpr std::string_view ERROR_MSG_2 = "VSCPA will now restart.";
 
+    inline constexpr std::string_view HELP_MENU = "Help is on the way! Redirecting to user manual...";
+    inline constexpr std::string_view UNREC_CMD = "Unrecognized command. Redirecting to user manual...";
+
     inline constexpr std::string_view RESET_SUCCESS = "Fast setup reset successful! Exiting...";
+    inline constexpr std::string_view ENABLE_SUCCESS = "Fast setup enabled! Exiting...";
     inline constexpr std::string_view FACTORY_RESET_SUCCESS = "Factory reset successful! Exiting...";
     inline constexpr std::string_view FACTORY_RESET_EXTRA = "Environment variables were not cleared. In case of a conflict, please clear them manually.\n";
     inline constexpr std::string_view OPENED_FROM_EXPLORER = "VSCPA was not launched from a directory. Exiting...";
@@ -37,9 +41,10 @@ namespace UI
 
 namespace Args
 {
-    inline constexpr std::string_view RESET = "reset"; // transform to full reset
-    inline constexpr std::string_view RESET_LOC = "resetl"; // for future updates
-    inline constexpr std::string_view RESET_GLOB = "resetg"; // for future updates
+    inline constexpr std::string_view HELP = "help";
+
+    inline constexpr std::string_view FAST_SETUP_ON = "fson";
+    inline constexpr std::string_view FAST_SETUP_OFF = "fsoff";
 
     inline constexpr std::string_view FACTORY = "factory";
 }
