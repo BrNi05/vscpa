@@ -133,10 +133,12 @@ bool UI::startEditMode()
     std::cin.ignore();
     std::cout << Setup::EDIT4; std::getline(std::cin, inputBuffer);
     inputBuffer.erase(std::remove_if(inputBuffer.begin(), inputBuffer.end(), ::isspace), inputBuffer.end());
+    inputBuffer.erase(std::remove(inputBuffer.begin(), inputBuffer.end(), '-'), inputBuffer.end());
     config.setDefines(inputBuffer);
 
     std::cout << Setup::EDIT5; std::getline(std::cin, inputBuffer);
     inputBuffer.erase(std::remove_if(inputBuffer.begin(), inputBuffer.end(), ::isspace), inputBuffer.end());
+    inputBuffer.erase(std::remove(inputBuffer.begin(), inputBuffer.end(), '-'), inputBuffer.end());
     config.setOtherCompilerArgs(inputBuffer);
 
     std::cout << Setup::EDIT6; std::cin >> inputBuffer;
