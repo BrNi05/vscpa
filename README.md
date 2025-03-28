@@ -34,6 +34,7 @@
             - VSCPA ignores folders that has `vscpa_ignore` in their names during this process.
         - Enter macros that should be defined at project scope. Use `,` marks to separate them.
         - Enter compiler args separated by `,` marks. (Such as `Wall` or `Werror`, without `-` or spaces.).
+            - Spaces and dashes are automatically removed from the input string, so technically they won't cause errors.
         - Enter the output executable name.
         - Select console appearance (external / VS Code Terminal).
 - If new folders and files were added to the project, or other compilations settings are needed, follow the steps above. The generated files will be overwritten.
