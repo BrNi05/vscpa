@@ -6,7 +6,6 @@
             "type": "shell",
             "command": "g++",
             "args": [
-                "-g",
                 "-std=c++20",
                 "-o",
                 "vscpa",
