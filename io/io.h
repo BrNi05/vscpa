@@ -61,7 +61,7 @@ namespace IO
     bool ownDirExists();
 
     // Returns the path to the stored default config file or an empty path if it does not exist
-    Path defaultConfigPath();
+    Path defaultConfigPath(bool creation = false);
 
     // Check if program is started from folder or canonical path
     bool startedFromFolder();

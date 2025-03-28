@@ -76,15 +76,15 @@ ConfigFile* IO::loadConfigFile()
     }
     else
     {
-        //ConfigFile *temp; temp->setMode(detectCMode());
         return new ConfigFile(true, findCompilerPath(), findDebuggerPath());
     }
 }
 
 void IO::saveConfigFile(ConfigFile *config)
 {
-    std::ofstream file(IO::defaultConfigPath());
-    if (file.is_open())
+    std::ofstream file(IO::defaultConfigPath(true));
+
+    try
     {
         file << INTERNAL::PROGRAM_VERSION << std::endl;
         file << static_cast<int>(config->getMode()) << std::endl;
@@ -101,7 +101,10 @@ void IO::saveConfigFile(ConfigFile *config)
 
         file.close();
     }
-    else { UI::errorMsg("saveConfigFile - open"); }
+    catch(const std::exception& e)
+    {
+        UI::errorMsg("saveConfigFile - open");
+    }
 }
 
 CMode IO::detectCMode()
@@ -417,7 +420,7 @@ bool IO::ownDirExists()
     return (std::filesystem::exists(ownDirPath) && std::filesystem::is_directory(ownDirPath));
 }
 
-Path IO::defaultConfigPath()
+Path IO::defaultConfigPath(bool creation)
 {
     Path defConfPath = ownDirPath / IO::DEFAULT_CONFIG_FILE_NAME;
 
@@ -428,7 +431,8 @@ Path IO::defaultConfigPath()
             return defConfPath;
         }
     }
-    return ""; 
+    else if (creation) { return defConfPath; }
+    return "";
 }
 
 bool IO::startedFromFolder()

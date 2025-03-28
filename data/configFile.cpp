@@ -51,18 +51,12 @@ void ConfigFile::setMode(CMode mode)
 
 void ConfigFile::setCStd(CStd cStd)
 {
-    if (this->mode == C)
-    {
-        this->cStd = cStd;
-    }
+    this->cStd = cStd;
 }
 
 void ConfigFile::setCPPStd(CPPStd cppStd)
 {
-    if (this->mode == CPP)
-    {
-        this->cppStd = cppStd;
-    }
+    this->cppStd = cppStd;
 }
 
 void ConfigFile::setHeaderInSubDirs(bool headerInSubDirs)

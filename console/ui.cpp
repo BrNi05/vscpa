@@ -124,6 +124,27 @@ bool UI::startEditMode()
     std::cout << Setup::EDIT1; std::cin >> inputBuffer; capitalize(inputBuffer);
     config.setMode(inputBuffer == "C" ? C : CPP);
 
+    bool CStdSet = false;
+    std::cout << Setup::EDIT1_2; std::cin >> inputBuffer; capitalize(inputBuffer);
+    if (config.getMode() == CPP)
+    {
+        for (const auto& pair : CPPStdMap)
+        {
+            if (pair.second.find(inputBuffer) != std::string::npos) { config.setCPPStd(pair.first); CStdSet = true; break; }
+        }
+        if (!CStdSet) { config.setCPPStd(CPP23); } // default to CPP23 if no match found
+        config.setCStd(C23); // in case the user switches to C mode later
+    }
+    else
+    {
+        for (const auto& pair : CStdMap)
+        {
+            if (pair.second.find(inputBuffer) != std::string::npos) { config.setCStd(pair.first); CStdSet = true; break; }
+        }
+        if (!CStdSet) { config.setCStd(C23); } // default to C23 if no match found
+        config.setCPPStd(CPP23); // in case the user switches to CPP mode later
+    }
+
     std::cout << Setup::EDIT2; std::cin >> inputBuffer; capitalize(inputBuffer);
     config.setHeaderInSubDirs((inputBuffer == "Y") || (inputBuffer == "y") ? true : false);
 
