@@ -322,7 +322,7 @@ void IO::generateVSCodeFiles(ConfigFile *config)
         {"version", "0.2.0"},
         {"configurations", {
             {
-                {"name", "VSCPA LAUNCH CONFIG"},
+                {"name", "VSCPA BUILD&RUN"},
                 {"type", "cppdbg"},
                 {"request", "launch"},
                 {"program", "${workspaceFolder}/" + config->getOutputProgramName()},
@@ -331,7 +331,14 @@ void IO::generateVSCodeFiles(ConfigFile *config)
                 {"cwd", "${workspaceFolder}"},
                 {"environment", JSON::array()},
                 {"externalConsole", config->getExternalConsole()},
-                //{"console", (config->getExternalConsole() ? "externalTerminal" : "integratedTerminal")},
+                {"type", "cppdbg"},
+                {"request", "launch"},
+                {"program", "${workspaceFolder}/" + config->getOutputProgramName()},
+                {"args", JSON::array()},
+                {"stopAtEntry", false},
+                {"cwd", "${workspaceFolder}"},
+                {"environment", JSON::array()},
+                {"externalConsole", config->getExternalConsole()},
                 {"MIMode", "gdb"},
                 {"setupCommands", {
                     {
