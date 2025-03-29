@@ -19,7 +19,6 @@
 #ifdef _WIN32
     #include <windows.h>
     #include <shlobj.h>
-    #include <knownfolders.h>
 #else
     #include <unistd.h>
     #include <cstdlib.h>
@@ -100,6 +99,7 @@ void IO::saveConfigFile(ConfigFile *config)
         file << (config->getExternalConsole() ? 1 : 0) << std::endl;
 
         file.close();
+        UI::infoMsg(UI::SAVE_SUCCESS, 1);
     }
     catch(const std::exception& e)
     {
@@ -366,6 +366,8 @@ void IO::generateVSCodeFiles(ConfigFile *config)
         launchFile.close();
     }
     catch (const std::exception& e) { UI::errorMsg("generateVSCodeFiles - json serialize"); }
+
+    UI::infoMsg(UI::JSON_SUCCESS, 1);
 }
 
 bool IO::fastSetupExists()
@@ -389,7 +391,6 @@ void IO::resetFastSetup()
         if (fastSetupExists()) { std::filesystem::remove(fastSetupFilePath); }
     }
     catch(const std::exception& e) { UI::errorMsg("resetFastSetup - remove"); }
-    
 }
 
 
@@ -411,7 +412,6 @@ Path IO::getAppdataPath()
             return Path(path) / ".local/share";
         }
         else { UI::errorMsg("getAppdataPath - getenv-HOME"); }
-
     #endif
 }
 
