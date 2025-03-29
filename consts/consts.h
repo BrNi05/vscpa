@@ -37,6 +37,9 @@ namespace UI
     inline constexpr std::string_view ADMIN_SUCCESS_2N = "Please restart your machine or manually restart explorer.exe to work with VSCPA. Exiting...";
     inline constexpr std::string_view ADMIN_SUCCESS_2Y_1 = "\nExplorer will restart in about 30 seconds. Please wait.";
     inline constexpr std::string_view ADMIN_SUCCESS_2Y = "Now, you can use VSCPA from the VS Code Terminal. Exiting...";
+
+    inline constexpr std::string_view SAVE_SUCCESS = "Config file saved successfully.";
+    inline constexpr std::string_view JSON_SUCCESS = "VS Code files generated successfully.";
 }
 
 namespace Args

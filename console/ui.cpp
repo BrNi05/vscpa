@@ -5,7 +5,6 @@
 
 #include <iostream>
 #include <thread>
-#include <stdlib.h>
 #include <algorithm>
 #include <string>
 
@@ -94,6 +93,7 @@ bool UI::setupSequence()
     char input;
     std::cin >> input;
     input = toupper(input);
+    clearConsole();
 
     switch (input)
     {
@@ -175,6 +175,8 @@ bool UI::startEditMode()
     std::cout << Setup::SAVE << std::endl;
     std::cout << Setup::CANCEL << std::endl;
     std::cin >> endPromt; capitalize(endPromt);
+
+    clearConsole();
 
     switch (endPromt)
     {

@@ -102,6 +102,7 @@ int main(int argc, char* argv[])
         
         while (!canExit)
         {   
+            UI::clearConsole();
             canExit = UI::setupSequence();
         }
     }
