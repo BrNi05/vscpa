@@ -56,24 +56,31 @@
 - Open VSCPA with the argument `factory` to perform a factory reset (should be used in case of frequent errors).
     - A factory reset does not remove environment path modifications or the generated `tasks` and `launch` files; these must be deleted manually.
 
-
 # Technical details and limitations
+
 - When using system API calls (eg. from `<shlobj.h>` on Windows platform), you must manually include the corresponding header in the task arguments.
 - Due to the lack of documentation of the Windows API, notifying the system about the change in environment variables is done by killing `explorer.exe` and then restarting it. This takes quite some time and can be dangerous. Manual restarting is advised.
 - OS support: Windows 11 23H2 and newer, no compatibility limitations for Linux and macOS.
 - Tested on Windown 11 Pro 24H2 (build 26100.3476) and Linux Manjaro 24.2.1 KDE Plasma (kernel: 6.12.19)
 
+# Release notes
+
+- 2025.03.29.: v1.0.0 BETA-1
+    - First pre-release
+
 # Future releases and roadmap
-- v1.0.1: code optimization and bugfixes
+
+- v1.0.x: code optimizations, documentation and bugfixes
 - v1.1: release/debug switch (-g flag) for terminal launch and edit mode
-- v1.2: better UI, enhanced edit mode
-- v1.3: global and project-scoped default configs
+    - CLI args: `switch`, `rel`, `dbg` - instantly change existing VSCPA generated JSON files
+    - Add debug/release switch the config generation
+- v1.2: global and project-scoped default configs
     - Default config in the project folder and a global one, project scope first
-- v1.4: profile system
-    - startup argument driven profile loading (other mean of fast setup)
+- v1.3: profile system
+    - startup argument driven profile loading (other means of fast setup)
     - save config as profile
     - Factory profiles: BME-Prog1, BME-Prog2, Modern C, Modern C++
 - v1.4: open generated files and edit existing data
-- v1.5: enhanced single file build task
+- v1.5: enhanced single file build task support, user configurability
 - v2.0: Makefile support
-    - Options to further customize the generation process.
+    - Makefile related error handling
