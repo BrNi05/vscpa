@@ -18,7 +18,7 @@
     - Check the technical details section for more details.
     - Upon success, the program will terminate, as no further setup needs to be done. 
 
-# Usage
+# Basic usage
 
 - Create some folders and files for your C/C++ project or just start coding.
 - If you and your code is ready for debugging or release, use VSCPA to and get to work in seconds.
@@ -30,7 +30,7 @@
     - Edit mode: create new config (apply and/or save it as default).
         - Select language. Currently supported: C, C++
         - Select language standard (all supported by GCC).
-            - VSCPA expects only az integer as input. Upon no or invalid input, the latest standard is selected.
+            - VSCPA expects only an integer as input. Upon no or invalid input, the latest standard is selected.
             - Current standards:
                 - C: 89, 90, 95, 99, 11, 17, 23
                 - CPP: 98, 03, 11, 14, 17, 20, 23

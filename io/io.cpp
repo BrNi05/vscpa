@@ -331,14 +331,6 @@ void IO::generateVSCodeFiles(ConfigFile *config)
                 {"cwd", "${workspaceFolder}"},
                 {"environment", JSON::array()},
                 {"externalConsole", config->getExternalConsole()},
-                {"type", "cppdbg"},
-                {"request", "launch"},
-                {"program", "${workspaceFolder}/" + config->getOutputProgramName()},
-                {"args", JSON::array()},
-                {"stopAtEntry", false},
-                {"cwd", "${workspaceFolder}"},
-                {"environment", JSON::array()},
-                {"externalConsole", config->getExternalConsole()},
                 {"MIMode", "gdb"},
                 {"setupCommands", {
                     {
