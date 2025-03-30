@@ -82,5 +82,6 @@
     - Factory profiles: BME-Prog1, BME-Prog2, Modern C, Modern C++
 - v1.4: open generated files and edit existing data
 - v1.5: enhanced single file build task support, user configurability
+- v1.6: New version available notifications
 - v2.0: Makefile support
     - Makefile related error handling
