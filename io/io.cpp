@@ -116,7 +116,7 @@ CMode IO::detectCMode()
     {
         for (const auto& entry : std::filesystem::recursive_directory_iterator(std::filesystem::current_path()))
         {
-            if (entry.path().extension() == ".cpp") { cppFound = true; }
+            if (entry.path().extension() == ".cpp") { cppFound = true; break; }
             else if (entry.path().extension() == ".c") { cFound = true; }
         }
     }
