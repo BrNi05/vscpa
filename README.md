@@ -80,8 +80,13 @@
     - startup argument driven profile loading (other means of fast setup)
     - save config as profile
     - Factory profiles: BME-Prog1, BME-Prog2, Modern C, Modern C++
-- v1.4: open generated files and edit existing data
-- v1.5: enhanced single file build task support, user configurability
-- v1.6: New version available notifications
+- v1.4: more arguments, faster workflow
+    - select profile and start immediate generation process
+    - set current tasks+launch file config as local/global default
+    - open vscpa into a directory from install executable
+- v1.5: open generated files and edit existing data
+    - dedicated starup argument as well
+- v1.6: enhanced single file build task support, user configurability
+- v1.7: New version available notifications
 - v2.0: Makefile support
     - Makefile related error handling
