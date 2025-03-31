@@ -14,8 +14,10 @@
 #elif __APPLE__
     #include <mach-o/dyld.h>
     #include <unistd.h>
+    #include <cstring>
 #else
     #include <unistd.h>
+    #include <cstring>
 #endif
 
 

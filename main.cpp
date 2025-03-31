@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
 {
     // BETA release - disable execution on not tested platforms
     #if defined(__linux__) || defined(__APPLE__)
-        UI:infoMsg("BETA release! Only Win11 is supported, yet. Exiting...");
+        UI::infoMsg("BETA release! Only Win11 is supported, yet. Exiting...");
         UI::exitDelayed(0);
     #endif
 

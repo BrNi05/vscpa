@@ -21,7 +21,6 @@
     #include <shlobj.h>
 #else
     #include <unistd.h>
-    #include <cstdlib.h>
 #endif
  
 using JSON = nlohmann::json;
@@ -182,8 +181,7 @@ Path IO::pathFinderFallback(std::string compiler)
         if (pipe && fgets(buffer, sizeof(buffer), pipe) != NULL) { _pclose(pipe); return std::string(buffer); }
         else { UI::errorMsg("findCompilerPath - fallbackFail"); return ""; } // compiler cannot be located
     #else
-        searchPhare = "which ";
-        pipe = popen((searchPhare + compiler).c_str(), "r");
+        pipe = popen(("which " + compiler).c_str(), "r");
         if (!pipe) { pipe = popen(("command -v " + compiler).c_str(), "r"); }
         if (pipe && fgets(buffer, sizeof(buffer), pipe) != NULL) { pclose(pipe); return std::string(buffer); }
         else { UI::errorMsg("findCompilerPath - fallbackFail"); return ""; } // compiler cannot be located
@@ -203,6 +201,7 @@ void IO::generateVSCodeFiles(ConfigFile *config)
     
     JSON args = {
         "-g",
+        "-fdiagnostics-color=always",
         "-std=" + std::string(config->getMode() == CPP ? CPPStdMap.at(config->getCPPStd()).second : CStdMap.at(config->getCStd()).second),
         "-o",
         config->getOutputProgramName(),
@@ -410,7 +409,7 @@ Path IO::getAppdataPath()
         {
             return Path(path) / ".local/share";
         }
-        else { UI::errorMsg("getAppdataPath - getenv-HOME"); }
+        else { UI::errorMsg("getAppdataPath - getenv-HOME"); return ""; }
     #endif
 }
 
@@ -436,12 +435,12 @@ Path IO::defaultConfigPath(bool creation)
 
 bool IO::startedFromFolder()
 {
-    char exePath[MAX_PATH] = {0};
+    char exePath[Sysmod::MAX_PATH] = {0};
 
     #ifdef _WIN32
         GetModuleFileNameA(NULL, exePath, sizeof(exePath));
     #elif __linux__
-        size_t len = readlink("/proc/self/exe", exePath, sizeof(exePath) - 1);
+        ssize_t len = readlink("/proc/self/exe", exePath, sizeof(exePath) - 1);
         if (len != -1) { exePath[len] = '\0'; }
         else { return true; } // fallback to true, making the program exit at later state
     #elif __APPLE__
