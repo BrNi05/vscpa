@@ -13,7 +13,7 @@ namespace UI
 {
     inline constexpr std::string_view CONSOLE_DEFAULT_TITLE = "VSCPA (v1.0.0)";
 
-    inline constexpr std::string_view WINSYS_NOT_SUPPORTED = "VSCPA only supports Windows 11! Exiting...";
+    inline constexpr std::string_view WINSYS_NOT_SUPPORTED = "VSCPA only supports Windows 11, yet! Exiting...";
 
     inline constexpr std::string_view GREETING_1 = "Welcome to VS Code Project Assistant!";
     inline constexpr std::string_view GREETING_2 = "\nSetup requires admin privileges, restarting...";
@@ -28,7 +28,7 @@ namespace UI
     inline constexpr std::string_view ENABLE_SUCCESS = "Fast setup enabled! Exiting...";
     inline constexpr std::string_view FACTORY_RESET_SUCCESS = "Factory reset successful! Exiting...";
     inline constexpr std::string_view FACTORY_RESET_EXTRA = "Environment variables were not cleared. In case of a conflict, please clear them manually.\n";
-    inline constexpr std::string_view OPENED_FROM_EXPLORER = "VSCPA was not launched from a directory. Exiting...";
+    inline constexpr std::string_view OPENED_FROM_EXPLORER = "VSCPA was launched from install location. Exiting...";
 
     inline constexpr std::string_view ADMIN_SUCCESS = "Admin privileges granted, initial setup completed.";
     inline constexpr std::string_view ADMIN_WARNING_2 = "\nWARNING! SAVE YOUR WORK! WINDOWS WILL BE PARTIALLY UNRESPONSIVE IF YOU SELECT [Y]!";
@@ -39,7 +39,7 @@ namespace UI
     inline constexpr std::string_view ADMIN_SUCCESS_2Y = "Now, you can use VSCPA from the VS Code Terminal. Exiting...";
 
     inline constexpr std::string_view SAVE_SUCCESS = "Config file saved successfully.";
-    inline constexpr std::string_view JSON_SUCCESS = "VS Code files generated successfully.";
+    inline constexpr std::string_view JSON_SUCCESS = "Tasks and launch files generated successfully.";
 }
 
 namespace Args
@@ -66,20 +66,21 @@ namespace IO
 namespace Sysmod
 {
     inline constexpr int MAX_PATH_LENGTH = 32767; // for PATH environment variable on Windows
-    inline constexpr int _MAX_PATH_ = 257; // Windows limit (+1 for null termination)
+    inline constexpr int _MAX_PATH_ = 257; // Windows limit (+1 for null termination), but used on all platforms
 }
 
 namespace Setup
 {
-    inline constexpr std::string_view PROMT = "Choose a run mode:";
+    inline constexpr std::string_view PROMT = "Choose mode:";
     inline constexpr std::string_view DEFAULT_MODE = " D - Default mode";
-    inline constexpr std::string_view EDIT_MODE = " E - Edit mode";
+    inline constexpr std::string_view NEW_MODE = " N - New mode";
+    // inline constexpr std::string_view EDIT_MODE = " E - Edit mode";
 
     inline constexpr std::string_view CHOOSE_OPERATION = "\nChoose an operation:\n";
     inline constexpr std::string_view APPLY_TO_CURRENT_FOLDER = " A - Apply to current folder";
     inline constexpr std::string_view SAVE_AS_DEFAULT = " D - Save as default";
-    inline constexpr std::string_view SAVE = " S - Save as default and apply";
-    inline constexpr std::string_view CANCEL = " C - Cancel and exit";
+    inline constexpr std::string_view SAVE = " S - Save as default and apply to current folder";
+    inline constexpr std::string_view CANCEL = " C - Cancel and go back";
 
     inline constexpr std::string_view EDIT1 = "\nSelect language ('C'/'CPP'): ";
     inline constexpr std::string_view EDIT1_2 = "\nSelect C/CPP standard (ENTER: C23/CPP23): ";

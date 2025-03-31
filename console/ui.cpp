@@ -88,7 +88,7 @@ bool UI::setupSequence()
 
     if (IO::fastSetupExists()) { return startDefaultMode(config); }
 
-    std::cout << Setup::PROMT << "\n" << Setup::DEFAULT_MODE << "\n" << Setup::EDIT_MODE << std::endl;
+    std::cout << Setup::PROMT << "\n" << Setup::DEFAULT_MODE << "\n" << Setup::NEW_MODE << std::endl;
 
     char input;
     std::cin >> input;
@@ -97,7 +97,7 @@ bool UI::setupSequence()
 
     switch (input)
     {
-        case Setup::EDIT_MODE.at(1):
+        case Setup::NEW_MODE.at(1):
             delete config;
             return startEditMode();
         break;
