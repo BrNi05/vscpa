@@ -66,7 +66,7 @@ namespace IO
 namespace Sysmod
 {
     inline constexpr int MAX_PATH_LENGTH = 32767; // for PATH environment variable on Windows
-    inline constexpr int MAX_PATH = 257; // Windows limit (+1 for null termination)
+    inline constexpr int _MAX_PATH_ = 257; // Windows limit (+1 for null termination)
 }
 
 namespace Setup

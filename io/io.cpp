@@ -435,7 +435,7 @@ Path IO::defaultConfigPath(bool creation)
 
 bool IO::startedFromFolder()
 {
-    char exePath[Sysmod::MAX_PATH] = {0};
+    char exePath[Sysmod::_MAX_PATH_] = {0};
 
     #ifdef _WIN32
         GetModuleFileNameA(NULL, exePath, sizeof(exePath));
