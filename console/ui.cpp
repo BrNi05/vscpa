@@ -10,48 +10,45 @@
 
 #ifdef _WIN32
     #include <windows.h>
+#else
+    #include <unistd.h>
 #endif
 
 // Functions for console management an error messages //  
-
-void UI::setConsoleSize(int width, int height)
-{
-    #ifdef _WIN32
-        // Windows terminal cannot be resized from code
-    #else
-        std::cout << "\033[8;" << height << ";" << width << "t" << std::flush;
-    #endif
-}
 
 void UI::setConsoleTitle(std::string_view title)
 {
     #ifdef _WIN32
         SetConsoleTitleA(title.data());
     #else
-        std::cout << "\033]0;" << title.data() << "\007";
+    if (isatty(fileno(stdout))) { std::cout << "\033]0;" << title << "\007" << std::flush; }
     #endif
 }
 
 void UI::clearConsole()
 {
     #ifdef _WIN32
-        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-        CONSOLE_SCREEN_BUFFER_INFO csbi;
-        DWORD count;
-        DWORD cellCount;
-        COORD homeCoords = {0, 0};
+        try
+        {
+            HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+            CONSOLE_SCREEN_BUFFER_INFO csbi;
+            DWORD count;
+            DWORD cellCount;
+            COORD homeCoords = {0, 0};
 
-        if (hConsole == INVALID_HANDLE_VALUE) { UI::errorMsg("console clearing - handle"); }
+            if (hConsole == INVALID_HANDLE_VALUE) { UI::errorMsg("console clearing - handle"); }
 
-        if (!GetConsoleScreenBufferInfo(hConsole, &csbi)) { UI::errorMsg("console clearing - buffer info"); }
-        cellCount = csbi.dwSize.X * csbi.dwSize.Y;
+            if (!GetConsoleScreenBufferInfo(hConsole, &csbi)) { UI::errorMsg("console clearing - buffer info"); }
+            cellCount = csbi.dwSize.X * csbi.dwSize.Y;
 
-        FillConsoleOutputCharacter(hConsole, (TCHAR) ' ', cellCount, homeCoords, &count);
-        FillConsoleOutputAttribute(hConsole, csbi.wAttributes, cellCount, homeCoords, &count);
+            FillConsoleOutputCharacter(hConsole, (TCHAR) ' ', cellCount, homeCoords, &count);
+            FillConsoleOutputAttribute(hConsole, csbi.wAttributes, cellCount, homeCoords, &count);
 
-        SetConsoleCursorPosition(hConsole, homeCoords);
+            SetConsoleCursorPosition(hConsole, homeCoords);
+        }
+        catch(const std::exception& e) { } // if opened in VSCode Terminal, this might throw an error   
     #else
-        std::cout << "\033[2J\033[H" << std::flush;
+        if (isatty(fileno(stdout))) { std::cout << "\033[2J\033[H" << std::flush; }
     #endif
 }
 
@@ -203,7 +200,7 @@ bool UI::startEditMode()
     }
 }
 
-// Helper functions
+// Helper functions //
 
 void UI::capitalize(std::string& str)
 {
@@ -217,15 +214,13 @@ void UI::capitalize(char& c)
 
 void UI::openGitHubPage()
 {
-    std::string url = "https://github.com/BrNi05/proj-assist";
+    std::string url(INTERNAL::README_LINK);
 
     #ifdef _WIN32
-        std::string command = "start " + url;
+        system(("start " + url).c_str());
     #elif __APPLE__
-        std::string command = "open " + url;
+        system(("open " + url).c_str());
     #elif __linux__
-        std::string command = "xdg-open " + url;
+        system(("xdg-open " + url).c_str());
     #endif
-
-    system(command.c_str());
 }

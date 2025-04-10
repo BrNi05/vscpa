@@ -19,7 +19,6 @@ int main(int argc, char* argv[])
     // Resize for initial setup, but not for normal use
     if (IO::startedFromFolder())
     {
-        UI::setConsoleSize(90, 40);
         UI::setConsoleTitle(UI::CONSOLE_DEFAULT_TITLE);
     }
     

@@ -172,7 +172,7 @@ Path IO::pathFinder(std::vector<Path> possiblePaths, std::string fileName)
 
 Path IO::pathFinderFallback(std::string compiler)
 {
-    char buffer[260];
+    char buffer[Sysmod::_MAX_PATH_] = {0};
     FILE* pipe;
 
     #ifdef _WIN32
@@ -422,14 +422,11 @@ Path IO::defaultConfigPath(bool creation)
 {
     Path defConfPath = ownDirPath / IO::DEFAULT_CONFIG_FILE_NAME;
 
-    if (std::filesystem::exists(defConfPath))
+    if (std::filesystem::exists(defConfPath) && std::filesystem::file_size(defConfPath) != 0)
     {
-        if (std::filesystem::file_size(defConfPath) != 0)
-        {
-            return defConfPath;
-        }
+        return defConfPath;
     }
-    else if (creation) { return defConfPath; }
+    else if (creation) { return defConfPath; } // returns (currently non-existant) target path for config file generation
     return "";
 }
 
@@ -441,12 +438,10 @@ bool IO::startedFromFolder()
         GetModuleFileNameA(NULL, exePath, sizeof(exePath));
     #elif __linux__
         ssize_t len = readlink("/proc/self/exe", exePath, sizeof(exePath) - 1);
-        if (len != -1) { exePath[len] = '\0'; }
-        else { return true; } // fallback to true, making the program exit at later state
+        if (len == -1) { return true; } // fallback to true, making the program exit at later state
     #elif __APPLE__
         uint32_t size = sizeof(exePath);
-        if (_NSGetExecutablePath(exePath, &size) == 0) { exePath[size] = '\0'; }
-        else { return true; } // fallback to true, making the program exit at later state
+        if (_NSGetExecutablePath(exePath, &size) != 0) { return true; } // fallback to true, making the program exit at later state
     #endif
 
     Path exeDir = std::filesystem::canonical(exePath).parent_path();

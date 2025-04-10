@@ -7,6 +7,7 @@ namespace INTERNAL
 {
     // Used for compatibility checks for future versions
     inline constexpr std::string_view PROGRAM_VERSION = "1.0.0";
+    inline constexpr std::string_view README_LINK = "https://github.com/BrNi05/vscpa";
 }
 
 namespace UI
@@ -66,7 +67,7 @@ namespace IO
 namespace Sysmod
 {
     inline constexpr int MAX_PATH_LENGTH = 32767; // for PATH environment variable on Windows
-    inline constexpr int _MAX_PATH_ = 257; // Windows limit (+1 for null termination), but used on all platforms
+    inline constexpr int _MAX_PATH_ = 1025; // Reasonable limit (+1 for null termination), enforced on all platforms
 }
 
 namespace Setup

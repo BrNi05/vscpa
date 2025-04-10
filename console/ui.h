@@ -17,9 +17,6 @@ namespace UI
 {
 // Functions for console management an error messages //  
 
-    // Sets console size
-    void setConsoleSize(int width, int height);
-
     // Sets the console title
     void setConsoleTitle(std::string_view title = UI::CONSOLE_DEFAULT_TITLE);
 
