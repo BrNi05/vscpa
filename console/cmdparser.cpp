@@ -40,10 +40,13 @@ void Parser::processCmd(int argc, char* argv[])
             UI::openGitHubPage();
         }
             
-        else if ((std::string(argv[i]) == Args::GCC || std::string(argv[i]) == Args::CLANG) && IO::isMacOS)
+        else if ((std::string(argv[i]) == Args::GCC || std::string(argv[i]) == Args::CLANG))
         {
-            IO::useClangCompiler(std::string_view(argv[1]) == Args::CLANG, true);
-            UI::infoMsg(UI::COMPILER, 0);
+            if (IO::isMacOS)
+            {
+                IO::useClangCompiler(std::string_view(argv[1]) == Args::CLANG, true);
+                UI::infoMsg(UI::COMPILER, 0);
+            }
         }
 
         else if (std::string(argv[i]) == Args::STAY) { stayOpen = true; }
