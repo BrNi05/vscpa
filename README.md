@@ -15,6 +15,7 @@
 - For the first time only, launch the program from the install location or shortcut.
     - VSCPA will automatically add itself (and GCC if not present) to user PATH.
     - Upon success, the program will terminate, as no further setup needs to be done.
+    - You can delete the shortcut since you will not need to use it again.
 - Check the technical details section for more details.
 
 # Basic usage
@@ -26,7 +27,7 @@
     - Default mode: generate files based on your previous settings or hard-coded, yet adaptive software defaults.
         - Fallback for default mode without default config saved: C++23/C23 (depending on the files in the folder), recursive source file and header include, `-Wall`, `-Werror`, `-Wextra`, `-Wpedantic` compiler flags as args, output name: runnable, integrated console.
     - New mode: create new config (apply and/or save it as default).
-        - Select language. Currently supported: C, C++
+        - Select language: C or C++
         - Select language standard (all supported by GCC or Clang).
             - VSCPA expects only an integer as input. Upon no or invalid input, the latest standard is selected.
             - Current standards:
@@ -35,7 +36,9 @@
         - Select if nested headers and .cpp/.c files should be included in compilation.
             - VSCPA ignores folders that has `vscpa_ignore` in their names during this process.
         - Enter macros that should be defined at project scope. Use `,` marks to separate them.
+            - If none, just press ENTER.
         - Enter compiler args separated by `,` characters. Spaces and dashes are automatically removed from the input string.
+            - If none, just press ENTER.
         - Enter the output executable name.
         - Select console appearance (external / VS Code Terminal).
 - If new folders and files were added to the project, or other compilations settings are needed, follow the steps above. The generated files will be overwritten.
@@ -44,10 +47,10 @@
 
 # Open with arguments
 
-- VSCPA can be customized via arguments.
+- VSCPA can be customized via command-line arguments.
     - This is not a normal startup, VSCPA will close as soon as the input is processed.
-    - To prevent this, use the `stay` argument. This way, VSCPA will not close.
-    - The arguments are stackable.
+    - To prevent this, use the argument `stay`. This way, VSCPA will not close.
+    - The arguments are stackable and should be separated by spaces.
 - Open VSCPA with the argument `fson` to enable fast setup.
     - With fast setup enabled, the default config is going to be used, without any user interaction.
 - Open VSCPA with the argument `fsoff` to disable fast setup.
@@ -58,12 +61,13 @@
 - Open VSCPA with the arguments: `clang` or `gcc` to toggle between compiler families on macOS (only).
     - On Apple hardware, the default compiler is set to clang, and the debugger is set to lldb. Alternative: gcc and gdb.
     - Problem matcher is set to be gcc, as it is the official recommendation.
+    - On Windows and Linux, these options have no effect.
 
 # Technical details and limitations
 
-- VSCPA assumes that the necessary softwares are installed on the host machine, such as C/C++ VSC extensions, GCC, Xcode Command Line Tools on macOS.
+- VSCPA assumes that the necessary softwares are installed on the host machine, such as C/C++ VSC extensions, GCC and Xcode Command Line Tools on macOS.
 - When using system API calls (eg. from `<shlobj.h>` on Windows platform), you must manually include the corresponding header in the task arguments.
-- On the latter two platforms VSCPA modifies `~/.bashrc` or `~/.zshrc` in order to modify PATH.
+- On the latter two platforms, VSCPA modifies `~/.bashrc` or `~/.zshrc` in order to modify PATH.
 - OS support: Windows 10 and 11, no compatibility limitation for Linux and macOS.
     - On Linux, VSCPA assumes that the `xdg-utils` package is installed.
 - Tested on Windown 11 Pro 24H2 (build 26100.3476) and Linux Manjaro 24.2.1 KDE Plasma (kernel: 6.12.19).
