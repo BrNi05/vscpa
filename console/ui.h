@@ -41,7 +41,7 @@ namespace UI
     bool startDefaultMode(ConfigFile* config);
 
     // Guides user through the process of creating a new config
-    bool startEditMode();
+    bool startNewMode();
 
 // Helper functions
 

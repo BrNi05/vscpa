@@ -90,7 +90,7 @@ bool UI::setupSequence()
     {
         case Setup::NEW_MODE.at(1):
             delete config;
-            return startEditMode();
+            return startNewMode();
         break;
 
         case Setup::DEFAULT_MODE.at(1):
@@ -107,7 +107,7 @@ bool UI::startDefaultMode(ConfigFile* config)
     return true;
 }
 
-bool UI::startEditMode()
+bool UI::startNewMode()
 {
     ConfigFile config = ConfigFile();
     std::string inputBuffer;
