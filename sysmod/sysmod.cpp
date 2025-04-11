@@ -26,7 +26,7 @@ bool sysmod::winSysSupported()
         #ifndef _WIN64
             return false;
         #endif
-        OSVERSIONINFOEXW osvi = { sizeof(OSVERSIONINFOEXW), 10, 0, 22621 };
+        OSVERSIONINFOEXW osvi = { sizeof(OSVERSIONINFOEXW), 10, 0, 10240 };
         DWORDLONG conditionMask = VerSetConditionMask(0, VER_BUILDNUMBER, VER_GREATER_EQUAL);
         return VerifyVersionInfoW(&osvi, VER_MAJORVERSION | VER_MINORVERSION | VER_BUILDNUMBER, conditionMask);
     #else
@@ -98,7 +98,7 @@ void sysmod::addSelfToPath()
                 if (size == 0) { UI::errorMsg("addSelfToPath - RegQueryValueExA str"); }
 
                 std::string compilerPath = IO::findCompilerPath(nullptr).parent_path().string();
-                if (pathQuery.find(compilerPath) == std::string::npos) { pathQuery += (";" + ownDir + ";" + compilerPath + "\\"); }
+                if (pathQuery.find(compilerPath) == std::string::npos) { pathQuery += (";" + ownDir + "\\" + ";" + compilerPath + "\\"); }
                 else { pathQuery += (";" + ownDir + "\\"); }
 
                 if (RegSetValueExA(hKey, "Path", 0, REG_EXPAND_SZ, (LPBYTE)pathQuery.c_str(), pathQuery.size() + 1) == ERROR_SUCCESS) { RegCloseKey(hKey); }

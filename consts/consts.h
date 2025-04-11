@@ -25,16 +25,19 @@ namespace UI
     inline constexpr std::string_view HELP_MENU = "Help is on the way! Redirecting to user manual...";
     inline constexpr std::string_view UNREC_CMD = "Unrecognized command. Redirecting to user manual...";
 
-    inline constexpr std::string_view RESET_SUCCESS = "Fast setup reset successful! Exiting...";
-    inline constexpr std::string_view ENABLE_SUCCESS = "Fast setup enabled! Exiting...";
-    inline constexpr std::string_view FACTORY_RESET_SUCCESS = "Factory reset successful! Exiting...";
-    inline constexpr std::string_view FACTORY_RESET_EXTRA = "Environment variables were not cleared. In case of a conflict, please clear them manually.\n";
-    inline constexpr std::string_view OPENED_FROM_EXPLORER = "VSCPA was launched from install location. Exiting...";
+    inline constexpr std::string_view RESET_SUCCESS = "Fast setup reset successful!";
+    inline constexpr std::string_view ENABLE_SUCCESS = "Fast setup enabled!";
+    inline constexpr std::string_view FACTORY_RESET_SUCCESS = "Factory reset successful!";
+    inline constexpr std::string_view FACTORY_RESET_EXTRA = "Environment variables were not cleared. In case of a conflict, please clear them manually.";
+    inline constexpr std::string_view OPENED_FROM_EXPLORER = "VSCPA was launched from install location.";
+    inline constexpr std::string_view COMPILER = "Compiler toggled!";
 
-    inline constexpr std::string_view ADMIN_SUCCESS = "Initial setup completed. \nNow, you can use VSCPA from the VS Code Terminal. Exiting...";
+    inline constexpr std::string_view ADMIN_SUCCESS = "\nInitial setup completed. \nNow, you can use VSCPA from the VS Code Terminal. Exiting...\n";
 
     inline constexpr std::string_view SAVE_SUCCESS = "Config file saved successfully.";
-    inline constexpr std::string_view JSON_SUCCESS = "Tasks and launch files generated successfully.";
+    inline constexpr std::string_view JSON_SUCCESS = "Tasks and launch files generated successfully.\n";
+
+    inline constexpr std::string_view NL = "";
 }
 
 namespace Args
@@ -45,6 +48,11 @@ namespace Args
     inline constexpr std::string_view FAST_SETUP_OFF = "fsoff";
 
     inline constexpr std::string_view FACTORY = "factory";
+
+    inline constexpr std::string_view GCC = "gcc";
+    inline constexpr std::string_view CLANG = "clang";
+
+    inline constexpr std::string_view STAY = "stay";
 }
 
 namespace IO
@@ -56,6 +64,8 @@ namespace IO
     inline constexpr std::string_view VSC_FOLDER = ".vscode";
 
     inline constexpr std::string_view IGNORE_FOLDER = "vscpa_ignore";
+
+    inline constexpr std::string_view CLANG_MARKER = "clang.txt";
 }
 
 namespace Sysmod
@@ -77,7 +87,7 @@ namespace Setup
     inline constexpr std::string_view SAVE = " S - Save as default and apply to current folder";
     inline constexpr std::string_view CANCEL = " C - Cancel and go back";
 
-    inline constexpr std::string_view EDIT1 = "\nSelect language ('C'/'CPP'): ";
+    inline constexpr std::string_view EDIT1 = "Select language ('C'/'CPP'): ";
     inline constexpr std::string_view EDIT1_2 = "\nSelect C/CPP standard (ENTER: C23/CPP23): ";
     inline constexpr std::string_view EDIT2 = "\nHeader files in subdirectories? (Y/N): ";
     inline constexpr std::string_view EDIT3 = "\nSource files in subdirectories? (Y/N): ";

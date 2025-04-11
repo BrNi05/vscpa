@@ -29,7 +29,13 @@ using Path = std::filesystem::path;
 Path IO::ownDirPath = getAppdataPath() / IO::OWN_DIR_NAME;
 Path IO::ownDirProfilesPath = ownDirPath / IO::PROFILES_DIR_NAME;
 Path IO::fastSetupFilePath = ownDirPath / IO::FAST_SETUP_FILE_NAME;
+Path IO::clangMarker = ownDirPath / IO::CLANG_MARKER;
 
+bool IO::isMacOS = false;
+#ifdef __MACH__
+    IO::isMacOS = true;
+#endif
+bool IO::useClang = true;
 
 // Config file related operations //
 
@@ -137,14 +143,18 @@ Path IO::findDebuggerPath()
         "C:\\Program Files\\Git\\usr\\bin\\"
     };
 
-    return pathFinder(possiblePaths, "gdb.exe");
+    #ifndef __APPLE__
+        return pathFinder(possiblePaths, "gdb");
+    #elif __APPLE__
+        return pathFinder(possiblePaths, "lldb");
+    #endif
 }
 
 Path IO::findCompilerPath(ConfigFile *config)
 {
     std::string compiler;
-    if (config != nullptr) { compiler = (config->getMode() == CPP ? "g++" : "gcc"); }
-    else { compiler = "g++"; }
+    if (config != nullptr) { compiler = (config->getMode() == CPP ? ((isMacOS && useClang) ? "clang++" : "g++") : ((isMacOS && useClang) ? "clang" : "gcc")); }
+    else { compiler = (isMacOS && useClang) ? "clang++" : "g++"; }
     
     std::vector<Path> possiblePaths = {
         "C:\\msys64\\mingw64\\bin\\",
@@ -163,7 +173,8 @@ Path IO::findCompilerPath(ConfigFile *config)
 Path IO::pathFinder(std::vector<Path> possiblePaths, std::string fileName)
 {
     #ifdef _WIN32
-        for (const auto& path : possiblePaths) { if (std::filesystem::exists(path / fileName)) { return path / fileName; } }
+        std::string newFileName = fileName + ".exe";
+        for (const auto& path : possiblePaths) { if (std::filesystem::exists(path / newFileName)) { return path / newFileName; } }
     #endif
 
     return pathFinderFallback(fileName);
@@ -177,14 +188,18 @@ Path IO::pathFinderFallback(std::string compiler)
     #ifdef _WIN32
         pipe = _popen(("where " + compiler).c_str(), "r");
         if (!pipe) { pipe = _popen(("command -v " + compiler).c_str(), "r"); }
-        if (pipe && fgets(buffer, sizeof(buffer), pipe) != NULL) { _pclose(pipe); return std::string(buffer); }
+        if (pipe && fgets(buffer, sizeof(buffer), pipe) != NULL) { _pclose(pipe); }
         else { UI::errorMsg("findCompilerPath - fallbackFail"); return ""; } // compiler cannot be located
     #else
         pipe = popen(("which " + compiler).c_str(), "r");
         if (!pipe) { pipe = popen(("command -v " + compiler).c_str(), "r"); }
-        if (pipe && fgets(buffer, sizeof(buffer), pipe) != NULL) { pclose(pipe); return std::string(buffer); }
+        if (pipe && fgets(buffer, sizeof(buffer), pipe) != NULL) { pclose(pipe); }
         else { UI::errorMsg("findCompilerPath - fallbackFail"); return ""; } // compiler cannot be located
     #endif
+
+    std::string result = buffer;
+    if (!result.empty() && result[result.size() - 1] == '\n') { result.erase(result.size() - 1); }
+    return result;
 }
 
 
@@ -304,7 +319,7 @@ void IO::generateVSCodeFiles(ConfigFile *config)
             {
                 {"label", "VSCPA SINGLE FILE BUILD TASK"},
                 {"type", "cppbuild"},
-                {"command", (config->getMode() == CPP ? "g++" : "gcc")},
+                {"command", (config->getMode() == CPP ? ((isMacOS && useClang) ? "clang++" : "g++") : ((isMacOS && useClang) ? "clang" : "gcc"))},
                 {"args", singleBuildArgs},
                 {"group", {{"kind", "test"}, {"isDefault", true}}},
                 {"problemMatcher", {"$gcc"}},
@@ -329,7 +344,7 @@ void IO::generateVSCodeFiles(ConfigFile *config)
                 {"cwd", "${workspaceFolder}"},
                 {"environment", JSON::array()},
                 {"externalConsole", config->getExternalConsole()},
-                {"MIMode", "gdb"},
+                {"MIMode", ((isMacOS && useClang) ? "lldb" : "gdb")},
                 {"setupCommands", {
                     {
                         {"description", "Enable pretty-printing for gdb"},
@@ -415,6 +430,18 @@ Path IO::getAppdataPath()
 bool IO::ownDirExists()
 {
     return (std::filesystem::exists(ownDirPath) && std::filesystem::is_directory(ownDirPath));
+}
+
+bool IO::useClangCompiler(bool state, bool set)
+{
+    if (set)
+    {
+        useClang = state;
+        if (useClang && !std::filesystem::exists(clangMarker)) { std::ofstream file(clangMarker); }
+        else if (std::filesystem::exists(clangMarker)) { std::filesystem::remove(clangMarker); }
+    }
+    
+    return useClang;
 }
 
 Path IO::defaultConfigPath(bool creation)

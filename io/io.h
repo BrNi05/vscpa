@@ -14,6 +14,10 @@ namespace IO
     extern Path ownDirPath;
     extern Path ownDirProfilesPath;
     extern Path fastSetupFilePath;
+    extern Path clangMarker;
+
+    extern bool isMacOS;
+    extern bool useClang;
     
 // Config file related operations //
 
@@ -57,8 +61,11 @@ namespace IO
     // Return the path to the appdata/local folder
     Path getAppdataPath();
 
-    // Checks if a program generated directory exists in appdata/local
+    // Checks if the program generated directory exists in appdata/local
     bool ownDirExists();
+
+    // Checks if a program generated marking file exists, also has the capability to create it
+    bool useClangCompiler(bool state = false, bool set = false);
 
     // Returns the path to the stored default config file or an empty path if it does not exist
     Path defaultConfigPath(bool creation = false);
