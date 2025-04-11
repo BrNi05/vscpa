@@ -23,9 +23,6 @@ namespace UI
     // Clears the console
     void clearConsole();
 
-    // Warns the user about first run and lack of admin privileges
-    void warnFirstRun();
-
     // Generic error message function
     void errorMsg(std::string where);
 

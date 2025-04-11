@@ -17,7 +17,7 @@ namespace UI
     inline constexpr std::string_view WINSYS_NOT_SUPPORTED = "VSCPA only supports Windows 11, yet! Exiting...";
 
     inline constexpr std::string_view GREETING_1 = "Welcome to VS Code Project Assistant!";
-    inline constexpr std::string_view GREETING_2 = "\nSetup requires admin privileges, restarting...";
+    inline constexpr std::string_view GREETING_2 = "\nInitial setup started...";
 
     inline constexpr std::string_view ERROR_MSG_1 = "An error occurred in component: ";
     inline constexpr std::string_view ERROR_MSG_2 = "VSCPA will now restart.";
@@ -31,13 +31,7 @@ namespace UI
     inline constexpr std::string_view FACTORY_RESET_EXTRA = "Environment variables were not cleared. In case of a conflict, please clear them manually.\n";
     inline constexpr std::string_view OPENED_FROM_EXPLORER = "VSCPA was launched from install location. Exiting...";
 
-    inline constexpr std::string_view ADMIN_SUCCESS = "Admin privileges granted, initial setup completed.";
-    inline constexpr std::string_view ADMIN_WARNING_2 = "\nWARNING! SAVE YOUR WORK! WINDOWS WILL BE PARTIALLY UNRESPONSIVE IF YOU SELECT [Y]!";
-    inline constexpr std::string_view ADMIN_WARNING_2_EXTRA = "Recommended: [N] and follow later instructions.";
-    inline constexpr std::string_view ADMIN_WARNING = "\nexplorer.exe has to be restarted to apply changes. (Y/N)";
-    inline constexpr std::string_view ADMIN_SUCCESS_2N = "Please restart your machine or manually restart explorer.exe to work with VSCPA. Exiting...";
-    inline constexpr std::string_view ADMIN_SUCCESS_2Y_1 = "\nExplorer will restart in about 30 seconds. Please wait.";
-    inline constexpr std::string_view ADMIN_SUCCESS_2Y = "Now, you can use VSCPA from the VS Code Terminal. Exiting...";
+    inline constexpr std::string_view ADMIN_SUCCESS = "Initial setup completed. \nNow, you can use VSCPA from the VS Code Terminal. Exiting...";
 
     inline constexpr std::string_view SAVE_SUCCESS = "Config file saved successfully.";
     inline constexpr std::string_view JSON_SUCCESS = "Tasks and launch files generated successfully.";

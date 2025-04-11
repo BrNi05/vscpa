@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <thread>
+#include <cstring>
 
 #ifdef _WIN32
     #include <windows.h>
@@ -14,10 +15,8 @@
 #elif __APPLE__
     #include <mach-o/dyld.h>
     #include <unistd.h>
-    #include <cstring>
 #else
     #include <unistd.h>
-    #include <cstring>
 #endif
 
 
@@ -37,83 +36,50 @@ bool sysmod::winSysSupported()
 
 bool sysmod::firstRun()
 {
-    // No admin rights, just check for own directory
     return !IO::ownDirExists();
 }
 
-void sysmod::restartWithAdmin()
-{
-    restartApp(true);
-}
-
-void sysmod::restartApp(bool withAdmin)
+void sysmod::restartApp()
 {
     #ifdef _WIN32
-        wchar_t appPath[MAX_PATH];
+        wchar_t appPath[Sysmod::_MAX_PATH_];
         GetModuleFileNameW(NULL, appPath, MAX_PATH);
 
         SHELLEXECUTEINFOW sei = { sizeof(sei) };
-        if (withAdmin) { sei.lpVerb = L"runas"; }
         sei.lpFile = L"wt.exe";
         sei.lpParameters = appPath;
         sei.hwnd = NULL;
         sei.nShow = SW_NORMAL;
 
         if (ShellExecuteExW(&sei)) { exit(0); }
-        else { UI::errorMsg("restWAdmin - shellexecute"); }
+        else { UI::errorMsg("restart - shellexecute"); }
+    #elif __APPLE__
+        char appPath[Sysmod::_MAX_PATH_] = {0};
+        uint32_t size = sizeof(appPath);
+        if (_NSGetExecutablePath(appPath, &size) != 0) { UI::errorMsg("restart - _NSGetExecutablePath"); }
+        execl(appPath, appPath, NULL);
+        exit(0);
     #else
-        char appPath[1024];
+        char appPath[Sysmod::_MAX_PATH_] = {0};
         ssize_t pathLength = readlink("/proc/self/exe", appPath, sizeof(appPath) - 1);
-        if (pathLength == -1) { UI::errorMsg("restWAdmin - readlink"); }
-        appPath[pathLength] = '\0';
-        
-        if (withAdmin) { execlp("sudo", "sudo", appPath, NULL); }
-        else { execlp(appPath, appPath, NULL); }
-
-        //std::string command = withAdmin ? "sudo " + std::string(appPath) : std::string(appPath);
-        //system(command.c_str());
+        if (pathLength == -1) { UI::errorMsg("restart - readlink"); }
+    
+        execl(appPath, appPath, NULL);
         exit(0);
     #endif
-}
-
-bool sysmod::firstRunWithAdmin()
-{
-    if (!firstRun()) { return false; }
-    else
-    {
-        #ifdef _WIN32
-            bool isAdmin = false;
-            HANDLE hToken = NULL;
-            if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken))
-            {
-                TOKEN_ELEVATION Elevation;
-                DWORD cbSize = sizeof(TOKEN_ELEVATION);
-                if (GetTokenInformation(hToken, TokenElevation, &Elevation, sizeof(Elevation), &cbSize))
-                {
-                    isAdmin = Elevation.TokenIsElevated;
-                }
-            }
-            if (hToken) { CloseHandle(hToken); }
-
-            if (isAdmin) { return true; }
-            else { return false; }
-        #else
-            return geteuid() == 0;
-        #endif
-    }
 }
 
 void sysmod::addSelfToPath()
 {
     #ifdef _WIN32
-        char exePath[MAX_PATH];
+        char exePath[Sysmod::_MAX_PATH_];
         GetModuleFileNameA(NULL, exePath, MAX_PATH);
 
         std::string ownDir = std::string(exePath);
         ownDir = ownDir.substr(0, ownDir.find_last_of("\\"));
     
         HKEY hKey;
-        if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment", 0, KEY_SET_VALUE | KEY_QUERY_VALUE | KEY_WOW64_64KEY, &hKey) == ERROR_SUCCESS)
+        if (RegOpenKeyExA(HKEY_CURRENT_USER, "Environment", 0, KEY_SET_VALUE | KEY_QUERY_VALUE | KEY_WOW64_64KEY, &hKey) == ERROR_SUCCESS)
         {
             DWORD size;
             DWORD type;
@@ -135,15 +101,17 @@ void sysmod::addSelfToPath()
                 if (pathQuery.find(compilerPath) == std::string::npos) { pathQuery += (";" + ownDir + ";" + compilerPath + "\\"); }
                 else { pathQuery += (";" + ownDir + "\\"); }
 
-                if (RegSetValueExA(hKey, "Path", 0, REG_SZ, (LPBYTE)pathQuery.c_str(), pathQuery.size() + 1) == ERROR_SUCCESS) { RegCloseKey(hKey); }
+                if (RegSetValueExA(hKey, "Path", 0, REG_EXPAND_SZ, (LPBYTE)pathQuery.c_str(), pathQuery.size() + 1) == ERROR_SUCCESS) { RegCloseKey(hKey); }
                 else { RegCloseKey(hKey); UI::errorMsg("addSelfToPath - RegSetValueExA"); }
             }
             else { UI::errorMsg("addSelfToPath - RegQueryValueExA"); }
         }
         else { UI::errorMsg("addSelfToPath - RegOpenKeyExA"); }
 
+        SendMessageTimeoutA(HWND_BROADCAST, WM_SETTINGCHANGE, 0, (LPARAM)"Environment", SMTO_ABORTIFHUNG, 4000, nullptr);
+
     #else
-        char exePath[1024] = {0};
+        char exePath[Sysmod::_MAX_PATH_] = {0};
 
         #ifdef __APPLE__
             uint32_t size = sizeof(exePath);
@@ -186,21 +154,6 @@ void sysmod::addSelfToPath()
             outputFile.close();
         }
         else { UI::errorMsg("addSelfToPath - ofstream"); }
-    #endif
-
-    saveLibGen();
-}
-
-void sysmod::addSelfToPathHelper()
-{
-    #ifdef _WIN32
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        system("taskkill /f /im explorer.exe");
-        std::this_thread::sleep_for(std::chrono::seconds(2));
-        system("start explorer.exe");
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    #else
-        
     #endif
 }
 

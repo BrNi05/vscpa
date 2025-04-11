@@ -164,10 +164,9 @@ Path IO::pathFinder(std::vector<Path> possiblePaths, std::string fileName)
 {
     #ifdef _WIN32
         for (const auto& path : possiblePaths) { if (std::filesystem::exists(path / fileName)) { return path / fileName; } }
-        return pathFinderFallback(fileName);
-    #else
-        return pathFinderFallback(fileName);
     #endif
+
+    return pathFinderFallback(fileName);
 }
 
 Path IO::pathFinderFallback(std::string compiler)

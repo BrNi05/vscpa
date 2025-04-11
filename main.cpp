@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 
     bool canExit = false;
     
-    // Resize for initial setup, but not for normal use
+    // Set console title - only seen when initial setup is done
     if (IO::startedFromFolder())
     {
         UI::setConsoleTitle(UI::CONSOLE_DEFAULT_TITLE);
@@ -29,30 +29,13 @@ int main(int argc, char* argv[])
         UI::exitDelayed(0);
     }
 
-    // Runs after install
-    if (sysmod::firstRunWithAdmin())
+    if (sysmod::firstRun())
     {
+        UI::infoMsg(UI::GREETING_1, 0); UI::infoMsg(UI::GREETING_2);
         sysmod::addSelfToPath();
         sysmod::saveLibGen();
         UI::infoMsg(UI::ADMIN_SUCCESS, 0);
-
-        UI::infoMsg(UI::ADMIN_WARNING_2, 0);
-        UI::infoMsg(UI::ADMIN_WARNING_2_EXTRA, 0);
-        UI::infoMsg(UI::ADMIN_WARNING, 0);
-        char input; std::cin >> input;
-        if (input == 'Y' || input == 'y')
-        {
-            sysmod::addSelfToPathHelper();
-            UI::infoMsg(UI::ADMIN_SUCCESS_2Y_1, 0);
-            UI::infoMsg(UI::ADMIN_SUCCESS_2Y, 1);
-        }
-        else { UI::infoMsg(UI::ADMIN_SUCCESS_2N, 1); }
-
-        UI::exitDelayed(2);
-    }
-    else if (sysmod::firstRun())
-    {
-        UI::warnFirstRun();
+        UI::exitDelayed(1);
     }
     else
     {

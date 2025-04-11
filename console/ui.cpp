@@ -52,12 +52,6 @@ void UI::clearConsole()
     #endif
 }
 
-void UI::warnFirstRun()
-{
-    infoMsg(UI::GREETING_1, 0); infoMsg(UI::GREETING_2);
-    sysmod::restartWithAdmin();
-}
-
 void UI::errorMsg(std::string where)
 {
     std::cout << UI::ERROR_MSG_1 << where << std::endl;

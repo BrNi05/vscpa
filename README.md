@@ -2,7 +2,7 @@
 
 ## About the project
 
-- VSCPA is a tool designed to assist C and C++ developers with debugging and building in VS Code.
+- VSCPA is a tool designed to assist C and C++ developers with debugging and building in VS Code (or OSS Code).
 - It generates the `tasks` and `launch` files for the project, completely automatically or based on user preferences.
 - It can be (and should be) opened in the working directory (the VS Code project folder) via the system or VS Code Terminal.
 - After initial setup, up to "0-click" file generation.
@@ -13,7 +13,6 @@
 - Download the lastest release. (Be sure to periodically check for new releases.)
 - Use the installer or manually paste the executable in a folder (preferably a typical install location).
 - For the first time only, launch the program from the install location or shortcut.
-    - Execute VSCPA with admin priviliges (`sudo` on linux), or else the program will restart requesting elevation.
     - VSCPA will automatically add itself (and GCC if not present) to environment variables.
     - Check the technical details section for more details.
     - Upon success, the program will terminate, as no further setup needs to be done. 
@@ -59,7 +58,7 @@
 # Technical details and limitations
 
 - When using system API calls (eg. from `<shlobj.h>` on Windows platform), you must manually include the corresponding header in the task arguments.
-- Due to the lack of documentation of the Windows API, notifying the system about the change in environment variables is done by killing `explorer.exe` and then restarting it. This takes quite some time and can be dangerous. Manual restarting is advised.
+- After VSCPA added itself to PATH, a manual restart is needed for Windows to refresh it's environment variables. Alternatively, restart the process `explorer.exe`. For Linux and MacOS, VSCPA handles this task.
 - OS support: Windows 11 23H2 and newer, no compatibility limitations for Linux and macOS.
 - Tested on Windown 11 Pro 24H2 (build 26100.3476) and Linux Manjaro 24.2.1 KDE Plasma (kernel: 6.12.19)
 
