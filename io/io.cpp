@@ -104,7 +104,7 @@ void IO::saveConfigFile(ConfigFile *config)
         file << (config->getExternalConsole() ? 1 : 0) << std::endl;
 
         file.close();
-        UI::infoMsg(UI::SAVE_SUCCESS, 1);
+        UI::infoMsg(UI::SAVE_SUCCESS, 500);
     }
     catch(const std::exception& e)
     {
@@ -379,7 +379,7 @@ void IO::generateVSCodeFiles(ConfigFile *config)
     }
     catch (const std::exception& e) { UI::errorMsg("generateVSCodeFiles - json serialize"); }
 
-    UI::infoMsg(UI::JSON_SUCCESS, 1);
+    UI::infoMsg(UI::JSON_SUCCESS, 500);
 }
 
 bool IO::fastSetupExists()

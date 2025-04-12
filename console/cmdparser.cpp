@@ -36,7 +36,7 @@ void Parser::processCmd(int argc, char* argv[])
         else if (std::string(argv[i]) == Args::HELP && !helpCalled)
         {
             helpCalled = true;
-            UI::infoMsg(UI::HELP_MENU, 1);
+            UI::infoMsg(UI::HELP_MENU, 0);
             UI::openGitHubPage();
         }
             
@@ -54,7 +54,7 @@ void Parser::processCmd(int argc, char* argv[])
         else if (!helpCalled) // unrecognised command
         {
             helpCalled = true;
-            UI::infoMsg(UI::UNREC_CMD, 1);
+            UI::infoMsg(UI::UNREC_CMD, 0);
             UI::openGitHubPage();
         }
     }

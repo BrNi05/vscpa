@@ -26,8 +26,8 @@ namespace UI
     // Generic error message function
     void errorMsg(std::string where);
 
-    // Generic information message function
-    void infoMsg(std::string_view msg, int delay = 2);
+    // Generic information message function, program is paused for delay milliseconds
+    void infoMsg(std::string_view msg, int delay = 2000);
 
     // Exits the app after a delay
     void exitDelayed(int delay);

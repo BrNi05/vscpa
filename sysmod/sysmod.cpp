@@ -175,7 +175,7 @@ void sysmod::factoryReset()
     try
     {
         std::filesystem::remove_all(IO::ownDirPath);
-        UI::infoMsg(UI::FACTORY_RESET_EXTRA);;
+        UI::infoMsg(UI::FACTORY_RESET_EXTRA, 1500);
     }
     catch(const std::exception& e)
     {

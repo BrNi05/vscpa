@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 
     if (sysmod::firstRun())
     {
-        UI::infoMsg(UI::GREETING_1, 0); UI::infoMsg(UI::GREETING_2);
+        UI::infoMsg(UI::GREETING_1, 0); UI::infoMsg(UI::GREETING_2, 1000);
         sysmod::addSelfToPath();
         sysmod::saveLibGen();
         UI::infoMsg(UI::ADMIN_SUCCESS, 0);
@@ -42,11 +42,11 @@ int main(int argc, char* argv[])
         // Disable direct launch from explorer
         if (IO::startedFromFolder())
         {
-            UI::infoMsg(UI::OPENED_FROM_EXPLORER, 2);
+            UI::infoMsg(UI::OPENED_FROM_EXPLORER, 1500);
             UI::exitDelayed(0);
         }
         
-        if (argc >= 2) { UI::infoMsg(UI::NL, 1); }
+        if (argc >= 2) { UI::infoMsg(UI::NL, 1000); }
         while (!canExit)
         {   
             UI::clearConsole();

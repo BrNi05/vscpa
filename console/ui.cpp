@@ -55,14 +55,14 @@ void UI::clearConsole()
 void UI::errorMsg(std::string where)
 {
     std::cout << UI::ERROR_MSG_1 << where << std::endl;
-    infoMsg(UI::ERROR_MSG_2);
+    infoMsg(UI::ERROR_MSG_2, 1500);
     sysmod::restartApp();
 }
 
 void UI::infoMsg(std::string_view msg, int delay)
 {
     std::cout << msg << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(delay));
+    std::this_thread::sleep_for(std::chrono::milliseconds(delay));
 }
 
 void UI::exitDelayed(int delay)
