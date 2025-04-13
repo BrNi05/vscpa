@@ -133,24 +133,16 @@ void sysmod::addSelfToPath()
         if (shell && strstr(shell, "zsh")) { shellConfig = homeDir + "/.zshrc"; }
         else { shellConfig = homeDir + "/.bashrc"; }
 
-        // Check if PATH already contains the program and g++
-        bool compilerInPath = false;
+        // Check if PATH already contains the program
         std::ifstream inputFile(shellConfig);
         std::string line;
-        while (std::getline(inputFile, line))
-        {
-            if (line.find(ownDir) != std::string::npos) { inputFile.close(); return; }
-            if (line.find("g++") != std::string::npos) { compilerInPath = true; }
-        }
-        
-        std::string compilerPath = IO::findCompilerPath(nullptr).parent_path().string();
+        while (std::getline(inputFile, line)) { if (line.find(ownDir) != std::string::npos) { inputFile.close(); return; } }
 
         std::ofstream outputFile(shellConfig, std::ios::app);
-        if (outputFile.is_open())
+        if (outputFile)
         {
             std::ofstream outputFile(shellConfig, std::ios::app);
             outputFile << "\nexport PATH=\"" << ownDir << ":$PATH\"\n";
-            if (!compilerInPath) { outputFile << "export PATH=\"" << compilerPath << ":$PATH\"\n"; }
             outputFile.close();
         }
         else { UI::errorMsg("addSelfToPath - ofstream"); }
