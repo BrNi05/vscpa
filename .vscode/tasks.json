@@ -2,7 +2,7 @@
     "tasks": [
         {
             "args": [
-                "-g",
+                //"-g",
                 "-fdiagnostics-color=always",
                 "-std=c++23",
                 "-o",
@@ -27,7 +27,6 @@
                 "-Ishell32",
                 "-O3",
                 "-flto"
-
             ],
             "command": "g++",
             "detail": "Generated C/C++ build task",
@@ -36,7 +35,7 @@
             "problemMatcher": [
                 "$gcc"
             ],
-            "type": "cppbuild"
+            "type": "shell"
         },
         {
             "command": "./vscpa",
@@ -46,7 +45,7 @@
             },
             "label": "VSCPA Run C/C++ Executable",
             "problemMatcher": [],
-            "type": "cppbuild"
+            "type": "shell"
         },
         {
             "args": [
@@ -72,7 +71,7 @@
             "problemMatcher": [
                 "$gcc"
             ],
-            "type": "cppbuild"
+            "type": "shell"
         }
     ],
     "version": "2.0.0"
