@@ -302,7 +302,7 @@ void IO::generateVSCodeFiles(ConfigFile *config)
         {"tasks", JSON::array({
             {
                 {"label", "VSCPA MAIN BUILD TASK"},
-                {"type", "shell"},
+                {"type", "cppbuild"},
                 {"command", (config->getMode() == CPP ? "g++" : "gcc")},
                 {"args", args},
                 {"group", "build"},
@@ -311,7 +311,7 @@ void IO::generateVSCodeFiles(ConfigFile *config)
             },
             {
                 {"label", "VSCPA Run C/C++ Executable"},
-                {"type", "shell"},
+                {"type", "cppbuild"},
                 {"command", "./" + config->getOutputProgramName()},
                 {"group", {{"kind", "test"}, {"isDefault", true}}},
                 {"problemMatcher", JSON::array()}
