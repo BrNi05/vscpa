@@ -2,7 +2,7 @@
 
 ## About the project
 
-- VSCPA is a tool designed to assist C and C++ developers with debugging and building in VS Code (or OSS Code).
+- VSCPA is a tool designed to assist C and C++ developers with debugging and building in Microsoft VS Code.
 - It generates the `tasks` and `launch` files for the project, completely automatically or based on user preferences.
 - It can be (and should be) opened in the working directory (the VS Code project folder) via the system terminal or VS Code built-in Terminal.
 - After initial setup, up to "0-click" file generation.
@@ -16,6 +16,8 @@
     - VSCPA will automatically add itself (and GCC if not present) to user PATH.
     - Upon success, the program will terminate, as no further setup needs to be done.
     - You can delete the shortcut since you will not need to use it again.
+    - On Linux and macOS, the terminal window will not appear if VSCPA is opened by double-clicking the executable, but it does it's job.
+- Restart your device to properly reload PATH variable.
 - Check the technical details section for more details.
 
 # Basic usage
@@ -65,7 +67,8 @@
 
 # Technical details and limitations
 
-- VSCPA assumes that the necessary softwares are installed on the host machine, such as C/C++ VSC extensions, GCC and Xcode Command Line Tools on macOS.
+- VSCPA does not support OSS Code, the open-source version of VS Code.
+- VSCPA assumes that the necessary softwares are installed on the host machine, such as C/C++ VSC extensions (by Microsoft), GCC, GDB and Xcode Command Line Tools on macOS.
 - When using system API calls (eg. from `<shlobj.h>` on Windows platform), you must manually include the corresponding header in the task arguments.
 - On the latter two platforms, VSCPA modifies `~/.bashrc` or `~/.zshrc` in order to modify PATH.
 - OS support: Windows 10 and 11, no compatibility limitation for Linux and macOS.
@@ -92,7 +95,7 @@
 - v1.3: profile system
     - startup argument driven profile loading (other means of fast setup)
     - save config as profile
-    - Factory profiles: BME-Prog1, BME-Prog2, Modern C, Modern C++
+    - Factory profiles: BME-Prog1, BME-Prog2, Modern C, Modern C++, Strict C, Strict C++
 - v1.4: more arguments, faster workflow
     - select profile and start immediate generation process
     - set current tasks+launch file config as local/global default
