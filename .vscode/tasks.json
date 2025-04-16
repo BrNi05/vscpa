@@ -36,7 +36,7 @@
             "problemMatcher": [
                 "$gcc"
             ],
-            "type": "shell"
+            "type": "cppbuild"
         },
         {
             "command": "./vscpa",
@@ -46,7 +46,7 @@
             },
             "label": "VSCPA Run C/C++ Executable",
             "problemMatcher": [],
-            "type": "shell"
+            "type": "cppbuild"
         },
         {
             "args": [
