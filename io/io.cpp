@@ -19,6 +19,9 @@
 #ifdef _WIN32
     #include <windows.h>
     #include <shlobj.h>
+#elif __MACH__
+    #include <mach-o/dyld.h>
+    #include <unistd.h>
 #else
     #include <unistd.h>
 #endif
@@ -31,9 +34,10 @@ Path IO::ownDirProfilesPath = ownDirPath / IO::PROFILES_DIR_NAME;
 Path IO::fastSetupFilePath = ownDirPath / IO::FAST_SETUP_FILE_NAME;
 Path IO::clangMarker = ownDirPath / IO::CLANG_MARKER;
 
-bool IO::isMacOS = false;
 #ifdef __MACH__
-    IO::isMacOS = true;
+    bool IO::isMacOS = true;
+#else
+    bool IO::isMacOS = false;
 #endif
 bool IO::useClang = true;
 
