@@ -46,7 +46,7 @@ void UI::clearConsole()
 
             SetConsoleCursorPosition(hConsole, homeCoords);
         }
-        catch(const std::exception& e) { } // if opened in VSCode Terminal, this might throw an error   
+        catch(const std::exception& e) { } // ignore, a failed console clear is not a critical error
     #else
         if (isatty(fileno(stdout))) { std::cout << "\033[2J\033[H" << std::flush; }
     #endif
